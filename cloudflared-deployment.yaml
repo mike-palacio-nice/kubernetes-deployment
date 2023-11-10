@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cloudflared
+  name: cloudflared
+spec:
+  selector:
+    matchLabels:
+      app: cloudflared
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      containers:
+      - name: cloudflared
+        image: cloudflare/cloudflared:2022.7.1
+        imagePullPolicy: Always
+        args: ["tunnel", "--no-autoupdate", "run", "--token={token}"]
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 60

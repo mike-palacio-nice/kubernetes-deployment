@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin-ingress
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+  - host: httpbin.palacpl.us
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: httpbin-svc
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - httpbin.palacpl.us
+    secretName: secure-tls

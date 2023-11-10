@@ -1,0 +1,8 @@
+# https://metallb.universe.tf/configuration/
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: metallb-advertisement
+spec:
+  ipAddressPools:
+  - metallb-address-pool

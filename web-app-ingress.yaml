@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    external-dns.alpha.kubernetes.io/target: test.cfargotunnel.com 
+    # external-dns.alpha.kubernetes.io/hostname: web-app.palacpl.us
+    # external-dns.alpha.kubernetes.io/ttl: "120" #optional
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true" #override cloudflare proxy setting
+spec:
+  ingressClassName: "nginx"
+  rules:
+  - host: external.palacpl.us
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-app
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - external.palacpl.us
+    secretName: secure-tls
