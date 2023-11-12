@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-pvc-nfs
+  namespace: plexserver
+spec:
+  storageClassName: nfs-csi
+  accessModes: [ReadWriteMany]
+  resources:
+    requests:
+      storage: 2Ti

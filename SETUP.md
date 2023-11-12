@@ -27,3 +27,62 @@ helm repo add metallb https://metallb.github.io/metallb
 helm install metallb metallb/metallb
 ```
 
+## Deploying CephFS with Rook
+
+*CephFs is not working as expected. Need to wait for (issue)[https://github.com/rook/rook/issues/6314] to be resolved so a PVC can be provisioned.*
+(Source)[https://github.com/morrismusumi/kubernetes/blob/main/clusters/homelab-k8s/apps/rook/README.md]
+
+```sh
+$ git clone --single-branch --branch master https://github.com/rook/rook.git
+cd rook/deploy/examples
+kubectl create -f crds.yaml -f common.yaml -f ceph-operator.yaml
+kubectl create -f ceph-cluster.yaml
+
+# Verify
+kubectl -n rook-ceph get pod
+
+# Toolbox ()
+$ kubectl create -f deploy/examples/toolbox.yaml
+
+# CephFS
+kubectl create -f ceph-filesystem.yaml
+kubectl create -f ceph-storageclass.yaml
+```
+
+## Deploying Kube-Plex
+
+(Source)[https://github.com/ressu/kube-plex/pkgs/container/kube-plex]
+```sh
+helm repo add kube-plex https://ressu.github.io/kube-plex
+
+kubectl create -f plex-pvc.yam (this is using cephfs that is not working.)
+
+helm upgrade plex kube-plex \
+    --namespace plex \
+    --install \
+    --set claimToken=[insert claim token here] \
+    --set persistence.data.claimName=[existing-pms-data-pvc] \
+    --set persistence.transcode.enabled=true \
+    --set persistence.transcode.claimName=plex-pvc \
+    --set ingress.enabled=true
+```
+
+## Deploying Plex
+
+(Source)[https://www.debontonline.com/2021/01/part-14-deploy-plexserver-yaml-with.html]
+### NFS Setup
+```sh
+sudo mkdir -p /mnt/plex-media
+sudo mount /dev/sdb /mnt/plex-media
+
+sudo chown nobody:nogroup /mnt/plex-media
+sudo chmod 0777 /mnt/plex-media
+echo '/srv/nfs 10.0.0.0/24(rw,sync,no_subtree_check)' | sudo tee /etc/exports
+
+helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+helm repo update
+helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system --set kubeletDir=/var/lib/kubelet
+
+kubectl apply -f plexserver/sc-nfs.yaml
+kubectl apply -f plexserver/plex-pvc-nfs.yaml
+```
