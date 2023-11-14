@@ -22,9 +22,6 @@ spec:
         app: plexserver
     spec:
       volumes:
-      - name: nfs-plex-config     # < linkname of the volume for the pvc
-        persistentVolumeClaim:
-          claimName: plexserver-pvc-config  # < pvc name we created in the previous yaml
       - name: nfs-data
         persistentVolumeClaim:
           claimName: plex-pvc
@@ -78,8 +75,6 @@ spec:
         stdin: true
         tty: true
         volumeMounts:            # < the volume mount in the container. Look at the relation volumelabel->pvc->pv
-        - mountPath: /config     # < mount location in the container
-          name: nfs-plex-config  # < volumelabel configured earlier in the yaml file
         - mountPath: /data
           name: nfs-data 
       restartPolicy: Always
