@@ -10,7 +10,7 @@ spec:
   capacity:
     storage: 3Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   hostPath:
     path: "/etc/plex"
 ---
@@ -22,7 +22,7 @@ metadata:
 spec:
   storageClassName: plex-config
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 1Gi
+      storage: 3Gi
