@@ -57,7 +57,7 @@ spec:
         - name: TZ
           value: America/Chicago
         - name: ADVERTISE_IP
-          value: "http://192.168.1.60:32400"
+          value: "192.168.1.60:32400"
         image: ghcr.io/linuxserver/plex   # < the name of the docker image we will use
         imagePullPolicy: Always    # < always use the latest image when creating container/pod
         name: plexserver           # < name of container
