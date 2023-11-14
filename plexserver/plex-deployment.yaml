@@ -28,7 +28,10 @@ spec:
       containers:
       - env:                       # < environment variables. See https://hub.docker.com/r/linuxserver/plex
         - name: PLEX_CLAIM
-          value: replaceMe
+          valueFrom:
+            secretKeyRef:
+              name: plex-claim-secret
+              key: claimKey
         - name: PGID
           value: "\x31\x30\x30"    # < ASCII code for '100'
         - name: PUID
