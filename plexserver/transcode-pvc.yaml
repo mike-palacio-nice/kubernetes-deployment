@@ -11,6 +11,8 @@ spec:
     storage: 20Gi
   accessModes:
     - ReadWriteMany
+  hostPath:
+    path: "/etc/plex-transcoder"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
