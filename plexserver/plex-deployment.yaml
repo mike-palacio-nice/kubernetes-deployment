@@ -25,6 +25,9 @@ spec:
       - name: nfs-data
         persistentVolumeClaim:
           claimName: plex-pvc
+      - name: config-data
+        persistentVolumeClaim:
+          claimName: plex-config-pvc
       containers:
       - env:                       # < environment variables. See https://hub.docker.com/r/linuxserver/plex
         - name: PLEX_CLAIM
@@ -80,6 +83,8 @@ spec:
         volumeMounts:            # < the volume mount in the container. Look at the relation volumelabel->pvc->pv
         - mountPath: /data
           name: nfs-data 
+        - mountPath: /config
+          name: config-data
       restartPolicy: Always
 
 ---
