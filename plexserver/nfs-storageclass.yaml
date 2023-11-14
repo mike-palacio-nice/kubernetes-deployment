@@ -1,7 +1,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: NFS-PlexMedia
+  name: nfs-plex-media
 provisioner: nfs.csi.k8s.io
 parameters:
   server: 192.168.1.3
