@@ -5,6 +5,7 @@ metadata:
   namespace: plexserver
 spec:
   storageClassName: ""
+  volumeMode: Filesystem 
   capacity:
     storage: 1Gi
   accessModes:
