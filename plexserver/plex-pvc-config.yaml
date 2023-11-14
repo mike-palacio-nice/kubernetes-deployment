@@ -4,8 +4,8 @@ metadata:
   name: plex-pvc
   namespace: plexserver
 spec:
-  storageClassName: nfs-media-sc
+  storageClassName: nfs-config-sc
   accessModes: [ReadWriteMany]
   resources:
     requests:
-      storage: 2Ti
+      storage: 1Gi

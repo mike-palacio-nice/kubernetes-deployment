@@ -77,12 +77,14 @@ sudo mount /dev/sdb /mnt/plex-media
 
 sudo chown nobody:nogroup /mnt/plex-media
 sudo chmod 0777 /mnt/plex-media
-echo '/srv/nfs 10.0.0.0/24(rw,sync,no_subtree_check)' | sudo tee /etc/exports
+echo '/srv/nfs 192.168.1.3/24(rw,sync,no_subtree_check)' | sudo tee /etc/exports
+sudo exportfs -rav
+sudo systemctl restart nfs-kernel-server
 
 helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
 helm repo update
 helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system --set kubeletDir=/var/lib/kubelet
 
-kubectl apply -f plexserver/sc-nfs.yaml
-kubectl apply -f plexserver/plex-pvc-nfs.yaml
+kubectl apply -f plexserver/plex-nfs-storageclass.yaml
+kubectl apply -f plexserver/plex-pvc.yaml
 ```
