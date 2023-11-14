@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: plex-transcode-pv
+  namespace: plexserver
+  labels:
+    type: local
+spec:
+  storageClassName: plex-transcode
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-transcode-pv
+  namespace: plexserver
+spec:
+  storageClassName: plex-transcode
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
