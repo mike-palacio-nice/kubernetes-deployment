@@ -1,11 +1,11 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: nfs-media-sc
+  name: NFS-PlexMedia
 provisioner: nfs.csi.k8s.io
 parameters:
   server: 192.168.1.3
-  share: /mnt/plex-media/media
+  share: /mnt/plex-media
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 mountOptions:
