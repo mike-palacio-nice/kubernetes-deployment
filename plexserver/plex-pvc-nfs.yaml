@@ -4,7 +4,7 @@ metadata:
   name: plex-pvc-nfs
   namespace: plexserver
 spec:
-  storageClassName: nfs-csi
+  storageClassName: plex-nfs
   accessModes: [ReadWriteMany]
   resources:
     requests:
