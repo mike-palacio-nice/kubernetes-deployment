@@ -17,7 +17,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: plex-transcode-pv
+  name: plex-transcode-pvc
   namespace: plexserver
 spec:
   storageClassName: plex-transcode
