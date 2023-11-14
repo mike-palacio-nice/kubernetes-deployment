@@ -4,9 +4,10 @@ metadata:
   name: plexserver            # < name of ingress entry
   namespace: plexserver       # < namespace where place the ingress enty
   annotations:
+    kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"  # < communicate in https with the backend (service/pod)
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"     # < use letsencrypt-prod application in kubernetes to generate ssl certificate
     nginx.ingress.kubernetes.io/app-root: /web               # < the root directory of the plex webserver
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"     # < use letsencrypt-prod application in kubernetes to generate ssl certificate
     external-dns.alpha.kubernetes.io/hostname: plex.palacpl.us
     external-dns.alpha.kubernetes.io/ttl: "120" #optional
 spec:
