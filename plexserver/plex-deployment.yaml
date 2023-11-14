@@ -86,7 +86,6 @@ spec:
           subPath: config
       restartPolicy: Always
       securityContext:
-        allowPrivilegeEscalation: false
         runAsUser: 0
 
 ---
