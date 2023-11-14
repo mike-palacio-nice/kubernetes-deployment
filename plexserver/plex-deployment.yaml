@@ -25,6 +25,9 @@ spec:
       - name: nfs-data
         persistentVolumeClaim:
           claimName: plex-pvc
+      - name: config-data
+        persistentVolumeClaim:
+          claimName: plex-config-pvc
       initContainers:
       - name: chmod-er
         image: busybox:latest
@@ -34,8 +37,10 @@ spec:
         - "1035"
         - /config
         volumeMounts:
-        - name: nfs-data
+        - name: config-data
           mountPath: /config
+        securityContext:
+          runAsUser: 0
       containers:
       - env:                       # < environment variables. See https://hub.docker.com/r/linuxserver/plex
         - name: PLEX_CLAIM
@@ -93,8 +98,7 @@ spec:
           name: nfs-data
           subPath: media
         - mountPath: /config
-          name: nfs-data
-          subPath: config
+          name: config-data
       restartPolicy: Always
 
 ---
