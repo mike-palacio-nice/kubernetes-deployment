@@ -6,10 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/configuration-snippet: |-
-      proxy_ssl_server_name on;
-      proxy_ssl_name $host;
+    # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     external-dns.alpha.kubernetes.io/hostname: dashboard.palacpl.us
     external-dns.alpha.kubernetes.io/ttl: "120"
