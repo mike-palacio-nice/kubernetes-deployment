@@ -84,7 +84,13 @@ sudo systemctl restart nfs-kernel-server
 helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
 helm repo update
 helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system --set kubeletDir=/var/lib/kubelet
+```
 
-kubectl apply -f plexserver/plex-nfs-storageclass.yaml
-kubectl apply -f plexserver/plex-pvc.yaml
+## Deploying Kube-Plex
+
+See (kube-plex)[https://github.com/mike-palacio-nice/kube-plex#readme]
+
+## Deploying Kubernetes Dashboard
+```sh
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 ```
