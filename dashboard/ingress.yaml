@@ -27,3 +27,4 @@ spec:
   tls:
   - hosts:
     - dashboard.palacpl.us
+    secretName: secure-tls
