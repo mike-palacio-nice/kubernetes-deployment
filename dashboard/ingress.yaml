@@ -7,11 +7,13 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |-
+      proxy_ssl_server_name on;
+      proxy_ssl_name $host;
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     external-dns.alpha.kubernetes.io/hostname: dashboard.palacpl.us
     external-dns.alpha.kubernetes.io/ttl: "120"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
-    
 spec:
   ingressClassName: "nginx"
   rules:
@@ -28,4 +30,3 @@ spec:
   tls:
   - hosts:
     - dashboard.palacpl.us
-    secretName: kubernetes-dashboard
