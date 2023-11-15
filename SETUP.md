@@ -89,6 +89,9 @@ helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-syste
 ## Deploying Kube-Plex
 
 See (kube-plex)[https://github.com/mike-palacio-nice/kube-plex#readme]
+```sh
+helm install plex charts/kube-plex --namespace plexserver
+```
 
 ## Deploying Kubernetes Dashboard
 ```sh
