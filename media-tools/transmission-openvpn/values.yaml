@@ -9,8 +9,8 @@ image:
 env:
   - name: OPENVPN_PROVIDER
     value: "SURFSHARK" # VPN provider. List of supported providers: https://haugene.github.io/docker-transmission-openvpn/supported-providers/
-  # - name: OPENVPN_CONFIG
-  #   value: "US Chicago"
+  - name: OPENVPN_CONFIG
+    value: "us_chicago"
   - name: OPENVPN_USERNAME
     valueFrom:
       secretKeyRef:
