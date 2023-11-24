@@ -97,3 +97,22 @@ helm install plex charts/kube-plex --namespace plexserver
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 ```
+
+## Deploying Transmission with OpenVPN
+```sh
+helm repo add bananaspliff https://bananaspliff.github.io/geek-charts
+helm repo update
+
+
+kubectl create secret generic openvpn \
+    --from-literal='username=<VPN_USERNAME>' \
+    --from-literal='password=<VPN_PASSWORD>' \
+    --namespace plexserver
+
+
+
+```
+
+
+
+
