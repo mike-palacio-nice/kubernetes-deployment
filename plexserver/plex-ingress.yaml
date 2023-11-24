@@ -29,7 +29,8 @@ spec:
         backend:
           service:
             name: transmission-transmission-openvpn
-            port: 80
+            port: 
+              number: 80
   tls:
   - hosts:
     - plex.palacpl.us
