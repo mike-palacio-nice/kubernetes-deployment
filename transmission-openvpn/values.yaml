@@ -3,34 +3,30 @@ replicaCount: 1
 
 image:
   repository: "haugene/transmission-openvpn"
-  tag: "latest-armhf" # Suffixed by -armhf to pull the ARM image
+  tag: "latest-armhf"
   pullPolicy: "IfNotPresent"
 
 env:
   - name: OPENVPN_PROVIDER
     value: "SURFSHARK" # VPN provider. List of supported providers: https://haugene.github.io/docker-transmission-openvpn/supported-providers/
   - name: OPENVPN_USERNAME
-    valueFrom: # Reference to the secret | openvpn.username
+    valueFrom:
       secretKeyRef:
         name: "openvpn"
         key: "username"
   - name: OPENVPN_PASSWORD
-    valueFrom: # Reference to the secret | openvpn.password
+    valueFrom:
       secretKeyRef:
         name: "openvpn"
         key: "password"
-  - name: NORDVPN_PROTOCOL
-    value: "TCP"
-  - name: NORDVPN_COUNTRY
-    value: "CH" # Country where we want to download over VPN
-  - name: NORDVPN_CATEGORY
-    value: "P2P" # VPN Type
   - name: LOCAL_NETWORK
     value: "192.168.0.0/24"
   - name: TRANSMISSION_PEER_PORT
     value: "47444"
   - name: TRANSMISSION_DOWNLOAD_DIR
     value: "/downloads/transmission"
+  - name: TZ
+    value: UTC
   - name: PUID
     value: "1000"
   - name: PGID
@@ -47,7 +43,7 @@ volumes:
   - name: "transmission-config"
     persistentVolumeClaim:
       claimName: "transmission-config-pvc"    
-  - name: "dev-tun" # Needed for VPN
+  - name: "dev-tun"
     hostPath:
       path: "/dev/net/tun"
 
@@ -59,10 +55,10 @@ volumeMounts:
     mountPath: "/downloads/transmission"
     subPath: media
   - name: "dev-tun"
-    mountPath: "/dev/net/tun" # Needed for VPN
+    mountPath: "/dev/net/tun"
 
 securityContext:
-  capabilities: # Needed for VPN
+  capabilities:
     add:
       - NET_ADMIN
 
