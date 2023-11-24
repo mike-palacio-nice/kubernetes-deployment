@@ -115,8 +115,8 @@ kubectl apply -f config-pvc.yaml
 helm install transmission bananaspliff/transmission-openvpn \
     --values values.yaml \
     --namespace plexserver
-
 ```
+OpenVPN credentials can be found (here)[https://my.surfshark.com/vpn/manual-setup/main/openvpn]
 
 
 
