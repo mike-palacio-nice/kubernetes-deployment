@@ -56,10 +56,7 @@ volumes:
       claimName: "plex-pvc"
   - name: "transmission-config"
     persistentVolumeClaim:
-      claimName: "transmission-config-pvc"    
-  # - name: "dev-tun"
-  #   hostPath:
-  #     path: "/dev/net/tun"
+      claimName: "transmission-config-pvc"
 
 volumeMounts:
   - name: "transmission-config"
@@ -68,8 +65,9 @@ volumeMounts:
   - name: "plex-media"
     mountPath: "/downloads/transmission"
     subPath: media
-  # - name: "dev-tun"
-  #   mountPath: "/dev/net/tun"
+  - name: "transmission-config"
+    mountPath: "/config/transmission-home"
+    subPath: settings.json
 
 securityContext:
   capabilities:
