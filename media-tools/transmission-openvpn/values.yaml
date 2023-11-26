@@ -9,10 +9,10 @@ image:
 env:
   - name: OPENVPN_PROVIDER
     value: "SURFSHARK" # VPN provider. List of supported providers: https://haugene.github.io/docker-transmission-openvpn/supported-providers/
-  # - name: OPENVPN_CONFIG
-  #   value: "us-chi.prod.surfshark.com_tcp"
   - name: OPENVPN_CONFIG
-    value: "us-dtw.prod.surfshark.com_tcp"
+    value: "us-chi.prod.surfshark.com_udp"
+  # - name: OPENVPN_CONFIG
+  #   value: "us-dtw.prod.surfshark.com_tcp"
   # - name: OPENVPN_PROTOCOL
   #   value: udp
   # - name: OPENVPN_CONNECTION
