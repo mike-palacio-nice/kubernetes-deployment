@@ -66,8 +66,8 @@ volumeMounts:
     mountPath: "/downloads/transmission"
     subPath: media
   - name: "transmission-config"
-    mountPath: "/config/transmission-home/settings.json"
-    subPath: settings.json
+    mountPath: "/config/transmission-home"
+    subPath: transmission-home
 
 securityContext:
   capabilities:
