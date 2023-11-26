@@ -12,15 +12,15 @@ env:
   # - name: OPENVPN_CONFIG
   #   value: "us-chi.prod.surfshark.com_tcp"
   - name: OPENVPN_CONFIG
-    value: "us-dtw.prod.surfshark.com_udp"
-  - name: OPENVPN_PROTOCOL
-    value: udp
-  - name: OPENVPN_CONNECTION
-    value: multihop
-  - name: OPENVPN_COUNTRY
-    value: us
-  - name: OPENVPN_CITY
-    value: any-city
+    value: "us-dtw.prod.surfshark.com_tcp"
+  # - name: OPENVPN_PROTOCOL
+  #   value: udp
+  # - name: OPENVPN_CONNECTION
+  #   value: multihop
+  # - name: OPENVPN_COUNTRY
+  #   value: us
+  # - name: OPENVPN_CITY
+  #   value: any-city
   - name: OPENVPN_OPTS
     value: "--inactive 3600 --ping 10 --ping-exit 60"
   - name: OPENVPN_USERNAME
