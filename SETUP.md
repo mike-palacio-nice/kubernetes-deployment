@@ -1,3 +1,35 @@
+## Restarting the K8s Cluster (WARNING: all resources will be removed)
+
+(Initial Setup)[https://deploy.equinix.com/blog/installing-and-deploying-kubernetes-on-ubuntu/]
+
+```sh
+kubeadm reset
+
+systemctl stop kubelet
+systemctl stop docker
+rm -rf /var/lib/cni/
+rm -rf /var/lib/kubelet/*
+rm -rf /etc/cni/
+ifconfig cni0 down
+ifconfig flannel.1 down
+ifconfig docker0 down
+
+systemctl restart kubelet
+systemctl restart containerd
+
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+
+kubectl taint nodes master-node node-role.kubernetes.io/control-plane-
+
+sudo ip link delete cni0 type bridge
+```
+
 ## Deploying Nginx Ingress Controller
 
 (Source)[https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/metallb-plus-nginx-ingress]
@@ -5,13 +37,22 @@
 ```sh
 helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.2
 ```
+
 ## Deploying Cert Manager
 
 (Source)[https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/cert-manager]
 
+```sh
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
+
+kubectl apply -f certmanager/tls-clusterissuer.yaml
+kubectl apply -f certmanager/tls-certificate.yaml
+```
+
 ## Deploying MetalLb
 
 (Source)[https://metallb.universe.tf/installation/]
+
 ```sh
 # see what changes would be made, returns nonzero returncode if different
 kubectl get configmap kube-proxy -n kube-system -o yaml | \
@@ -27,50 +68,28 @@ helm repo add metallb https://metallb.github.io/metallb
 helm install metallb metallb/metallb
 ```
 
-## Deploying CephFS with Rook
-
-*CephFs is not working as expected. Need to wait for (issue)[https://github.com/rook/rook/issues/6314] to be resolved so a PVC can be provisioned.*
-(Source)[https://github.com/morrismusumi/kubernetes/blob/main/clusters/homelab-k8s/apps/rook/README.md]
+## Deploying CloudFlare Ingress Controller
 
 ```sh
-$ git clone --single-branch --branch master https://github.com/rook/rook.git
-cd rook/deploy/examples
-kubectl create -f crds.yaml -f common.yaml -f ceph-operator.yaml
-kubectl create -f ceph-cluster.yaml
-
-# Verify
-kubectl -n rook-ceph get pod
-
-# Toolbox ()
-$ kubectl create -f deploy/examples/toolbox.yaml
-
-# CephFS
-kubectl create -f ceph-filesystem.yaml
-kubectl create -f ceph-storageclass.yaml
+helm upgrade --install --wait \
+  -n cloudflare-tunnel-ingress-controller --create-namespace \
+  cloudflare-tunnel-ingress-controller \
+  strrl.dev/cloudflare-tunnel-ingress-controller \
+  --set=cloudflare.apiToken="<cloudflare-api-token>",cloudflare.accountId="<cloudflare-account-id>",cloudflare.tunnelName="<your-favorite-tunnel-name>"
 ```
 
-## Deploying Kube-Plex
+## Deploying External-DNS
 
-(Source)[https://github.com/ressu/kube-plex/pkgs/container/kube-plex]
-```sh
-helm repo add kube-plex https://ressu.github.io/kube-plex
+kubectl apply -f cloudflare/cloudflare-api-token.yaml
 
-kubectl create -f plex-pvc.yam (this is using cephfs that is not working.)
-
-helm upgrade plex kube-plex \
-    --namespace plex \
-    --install \
-    --set claimToken=[insert claim token here] \
-    --set persistence.data.claimName=[existing-pms-data-pvc] \
-    --set persistence.transcode.enabled=true \
-    --set persistence.transcode.claimName=plex-pvc \
-    --set ingress.enabled=true
-```
+kubectl apply -f external-dns/external-dns-deployment.yaml
 
 ## Deploying Plex
 
 (Source)[https://www.debontonline.com/2021/01/part-14-deploy-plexserver-yaml-with.html]
+
 ### NFS Setup
+
 ```sh
 sudo mkdir -p /mnt/plex-media
 sudo mount /dev/sdb /mnt/plex-media
@@ -89,16 +108,19 @@ helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-syste
 ## Deploying Kube-Plex
 
 See (kube-plex)[https://github.com/mike-palacio-nice/kube-plex#readme]
+
 ```sh
 helm install plex charts/kube-plex --namespace plexserver
 ```
 
 ## Deploying Kubernetes Dashboard
+
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 ```
 
 ## Deploying Transmission with OpenVPN
+
 ```sh
 helm repo add bananaspliff https://bananaspliff.github.io/geek-charts
 helm repo update
@@ -116,8 +138,5 @@ helm install transmission bananaspliff/transmission-openvpn \
     --values values.yaml \
     --namespace plexserver
 ```
+
 OpenVPN credentials can be found (here)[https://my.surfshark.com/vpn/manual-setup/main/openvpn]
-
-
-
-
