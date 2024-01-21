@@ -80,7 +80,7 @@ helm upgrade --install --wait \
 
 ## Deploying External-DNS
 
-kubectl apply -f cloudflare/cloudflare-api-token.yaml
+kubectl apply -f cloudflare/cloudflare-api-key.yaml
 
 kubectl apply -f external-dns/external-dns-deployment.yaml
 
@@ -133,7 +133,7 @@ kubectl create secret generic openvpn \
 
 kubectl apply -f media-tools/ingress.yaml
 
-kubectl apply -f config-pvc.yaml
+kubectl apply -f media-tools/transmission-openvpn/config-pvc.yaml
 helm install transmission bananaspliff/transmission-openvpn \
     --values values.yaml \
     --namespace plexserver
