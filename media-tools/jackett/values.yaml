@@ -2,23 +2,23 @@
 replicaCount: 1
 
 image:
-  repository: "gjeanmart/jackettvpn" # Special image to use Jackett over a VPN
+  repository: "dyonr/jackettvpn" # Special image to use Jackett over a VPN
   tag: "latest"
   pullPolicy: IfNotPresent
 
 env:
   - name: VPN_ENABLED
     value: "no" # Enable Jackett over VPN
-  - name: VPN_USERNAME
-    valueFrom:
-      secretKeyRef: # Reference to the secret | openvpn.username
-        name: "openvpn"
-        key: "username"
-  - name: VPN_PASSWORD
-    valueFrom:
-      secretKeyRef: # Reference to the secret | openvpn.password
-        name: "openvpn"
-        key: "password"
+  # - name: VPN_USERNAME
+  #   valueFrom:
+  #     secretKeyRef: # Reference to the secret | openvpn.username
+  #       name: "openvpn"
+  #       key: "username"
+  # - name: VPN_PASSWORD
+  #   valueFrom:
+  #     secretKeyRef: # Reference to the secret | openvpn.password
+  #       name: "openvpn"
+  #       key: "password"
   - name: LAN_NETWORK
     value: "192.168.0.0/24"
   - name: PUID
@@ -40,7 +40,7 @@ volumeMounts:
     mountPath: "/config"
     subPath: "configs/jackett" # Path /mnt/ssd/media/configs/jackett where jackett writes the configuration
   - name: "config"
-    mountPath: "/downloads"
+    mountPath: "/blackhole"
     subPath: downloads # Path /mnt/ssd/media/downloads/jackett ???
 
 securityContext:
