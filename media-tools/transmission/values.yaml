@@ -59,15 +59,15 @@ volumes:
       claimName: "transmission-config-pvc"
 
 volumeMounts:
-  - name: media
+  - name: config
     mountPath: "/data"
     subPath: transmission-data
-  - name: media
-    mountPath: "/downloads/transmission"
-    subPath: media
   - name: config
     mountPath: "/config/transmission-home"
     subPath: transmission-home
+  - name: media
+    mountPath: "/downloads/transmission"
+    subPath: media
 
 securityContext:
   capabilities:
