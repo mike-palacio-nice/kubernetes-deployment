@@ -13,17 +13,38 @@ metadata:
 spec:
   ingressClassName: "nginx"
   rules:
-  - host: media.palacpl.us
-    http:
-      paths:
-      - path: /transmission
-        pathType: Prefix
-        backend:
-          service:
-            name: transmission-transmission-openvpn
-            port: 
-              number: 80
+    - host: media.palacpl.us
+      http:
+        paths:
+          - path: /transmission
+            pathType: Prefix
+            backend:
+              service:
+                name: transmission-transmission-openvpn
+                port:
+                  number: 80
+          - path: /sonarr
+            pathType: Prefix
+            backend:
+              service:
+                name: sonarr
+                port:
+                  number: 80
+          - path: /jackett
+            pathType: Prefix
+            backend:
+              service:
+                name: jackett
+                port:
+                  number: 80
+          - path: /radarr
+            pathType: Prefix
+            backend:
+              service:
+                name: radarr
+                port:
+                  number: 80
   tls:
-  - hosts:
-    - media.palacpl.us
-    secretName: secure-tls
+    - hosts:
+        - media.palacpl.us
+      secretName: secure-tls

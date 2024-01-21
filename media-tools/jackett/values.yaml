@@ -1,0 +1,52 @@
+## media.jackett.values.yml
+replicaCount: 1
+
+image:
+  repository: "gjeanmart/jackettvpn" # Special image to use Jackett over a VPN
+  tag: "arm-latest"
+  pullPolicy: IfNotPresent
+
+env:
+  - name: VPN_ENABLED
+    value: "no" # Enable Jackett over VPN
+  - name: VPN_USERNAME
+    valueFrom:
+      secretKeyRef: # Reference to the secret | openvpn.username
+        name: "openvpn"
+        key: "username"
+  - name: VPN_PASSWORD
+    valueFrom:
+      secretKeyRef: # Reference to the secret | openvpn.password
+        name: "openvpn"
+        key: "password"
+  - name: LAN_NETWORK
+    value: "192.168.0.0/24"
+  - name: PUID
+    value: "1000"
+  - name: PGID
+    value: "1000"
+
+service:
+  type: ClusterIP
+  port: 80
+
+volumes:
+  - name: "plex-media"
+    persistentVolumeClaim:
+      claimName: "plex-pvc"
+  - name: "config"
+    persistentVolumeClaim:
+      claimName: "jackett-config-pvc" # PersistentVolumeClaim created earlier
+
+volumeMounts:
+  - name: "config"
+    mountPath: "/config"
+    subPath: "configs/jackett" # Path /mnt/ssd/media/configs/jackett where jackett writes the configuration
+  - name: "plex-media"
+    mountPath: "/downloads"
+    subPath: "downloads/jackett" # Path /mnt/ssd/media/downloads/jackett ???
+
+securityContext:
+  capabilities: # Needed for VPN
+    add:
+      - NET_ADMIN
