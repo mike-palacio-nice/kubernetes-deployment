@@ -135,9 +135,9 @@ kubectl create secret generic openvpn \
 
 kubectl apply -f media-tools/ingress.yaml
 
-kubectl apply -f media-tools/transmission-openvpn/config-pvc.yaml
+kubectl apply -f media-tools/transmission/config-pvc.yaml
 helm install transmission bananaspliff/transmission-openvpn \
-    --values values.yaml \
+    --values media-tools/transmission/values.yaml \
     --namespace plexserver
 ```
 
@@ -171,7 +171,7 @@ sudo vi /etc/radarr/configs/radarr/config.xml
   <UrlBase>/radarr</UrlBase>
 </Config>
 
-helm install jackett bananaspliff/radarr \
-    --values media-tools/jackett/values.yaml \
+helm install radarr bananaspliff/radarr \
+    --values media-tools/radarr/values.yaml \
     --namespace plexserver
 ```

@@ -51,10 +51,10 @@ service:
   port: 80
 
 volumes:
-  - name: "plex-media"
+  - name: media
     persistentVolumeClaim:
       claimName: "plex-pvc"
-  - name: "transmission-config"
+  - name: config
     persistentVolumeClaim:
       claimName: "transmission-config-pvc"
 
@@ -62,10 +62,10 @@ volumeMounts:
   - name: media
     mountPath: "/data"
     subPath: "tmp/transmission-data"
-  - name: "plex-media"
+  - name: media
     mountPath: "/downloads/transmission"
     subPath: media
-  - name: "transmission-config"
+  - name: config
     mountPath: "/config/transmission-home"
     subPath: transmission-home
 
