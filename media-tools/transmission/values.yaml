@@ -61,7 +61,7 @@ volumes:
 volumeMounts:
   - name: media
     mountPath: "/data"
-    subPath: "media/transmission-data"
+    subPath: transmission-data
   - name: media
     mountPath: "/downloads/transmission"
     subPath: media
