@@ -1,0 +1,37 @@
+## media.radarr.values.yml
+replicaCount: 1
+
+image:
+  repository: "linuxserver/radarr"
+  tag: "arm32v7-latest" # ARM image
+  pullPolicy: IfNotPresent
+
+env:
+  - name: PUID
+    value: "1000"
+  - name: PGID
+    value: "1000"
+
+service:
+  type: ClusterIP
+  port: 80
+
+volumes:
+  - name: config
+    persistentVolumeClaim:
+      claimName: "radarr-config-pvc"
+  - name: media
+    persistentVolumeClaim:
+      claimName: "plex-pvc" # PersistentVolumeClaim created earlier
+
+volumeMounts:
+  - name: config
+    mountPath: "/config"
+    subPath: "configs/radarr" # Path /mnt/ssd/media/configs/radarr where radarr writes the configuration
+  - name: media
+    mountPath: "/downloads/transmission"
+    subPath: media # Path /mnt/ssd/media/downloads/transmission where radarr picks up downloaded movies
+  - name: media
+    mountPath: "/movies"
+    subPath: "library/movies" # Path /mnt/ssd/media/library/movies where radarr moves and renames the movies
+

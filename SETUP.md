@@ -122,6 +122,8 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/a
 ## Deploying Transmission with OpenVPN
 
 ```sh
+
+
 helm repo add bananaspliff https://bananaspliff.github.io/geek-charts
 helm repo update
 
@@ -140,3 +142,36 @@ helm install transmission bananaspliff/transmission-openvpn \
 ```
 
 OpenVPN credentials can be found (here)[https://my.surfshark.com/vpn/manual-setup/main/openvpn]
+
+## Deploying Jackett
+
+```sh
+kubectl apply -f media-tools/jackett/config-pvc.yaml
+mkdir -p /mnt/ssd/media/configs/jackett/Jackett/
+
+sudo vi /etc/jackett/configs/jackett/Jackett/ServerConfig.json
+(insert)
+{
+  "BasePathOverride": "/jackett"
+}
+
+helm install jackett bananaspliff/jackett \
+    --values media-tools/jackett/values.yaml \
+    --namespace plexserver
+```
+
+## Deploying Radarr
+
+```sh
+kubectl apply -f media-tools/radarr/config-pvc.yaml
+
+sudo vi /etc/radarr/configs/radarr/config.xml
+(insert)
+<Config>
+  <UrlBase>/radarr</UrlBase>
+</Config>
+
+helm install jackett bananaspliff/radarr \
+    --values media-tools/jackett/values.yaml \
+    --namespace plexserver
+```
