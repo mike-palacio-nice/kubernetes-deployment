@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  repository: "dyonr/jackettvpn" # Special image to use Jackett over a VPN
+  repository: "gjeanmart/jackettvpn" # Special image to use Jackett over a VPN
   tag: "latest"
   pullPolicy: IfNotPresent
 
