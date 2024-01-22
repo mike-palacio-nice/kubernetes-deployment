@@ -42,9 +42,9 @@ env:
   - name: TZ
     value: UTC
   - name: PUID
-    value: "1000"
+    value: "65534" #nobody
   - name: PGID
-    value: "1000"
+    value: "65534" #nogroup
 
 service:
   type: ClusterIP
@@ -59,7 +59,7 @@ volumes:
       claimName: "transmission-config-pvc"
 
 volumeMounts:
-  - name: config
+  - name: media
     mountPath: "/data"
     subPath: transmission-data
   - name: config

@@ -96,7 +96,7 @@ sudo mount /dev/sdb /mnt/plex-media
 
 sudo chown nobody:nogroup /mnt/plex-media
 sudo chmod 0777 /mnt/plex-media
-echo '/srv/nfs 192.168.1.3/24(rw,sync,no_subtree_check)' | sudo tee /etc/exports
+echo '/mnt/plex-media 192.168.1.3/24(rw,sync,no_subtree_check)' | sudo tee /etc/exports
 sudo exportfs -rav
 sudo systemctl restart nfs-kernel-server
 
