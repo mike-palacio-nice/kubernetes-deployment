@@ -10,11 +10,11 @@ env:
   - name: OPENVPN_PROVIDER
     value: "SURFSHARK" # VPN provider. List of supported providers: https://haugene.github.io/docker-transmission-openvpn/supported-providers/
   - name: OPENVPN_CONFIG
-    value: "us-chi.prod.surfshark.com_udp"
+    value: "us-chi.prod.surfshark.com_tcp"
   # - name: OPENVPN_CONFIG
   #   value: "us-dtw.prod.surfshark.com_tcp"
   # - name: OPENVPN_PROTOCOL
-  #   value: udp
+  #   value: tcp
   # - name: OPENVPN_CONNECTION
   #   value: multihop
   # - name: OPENVPN_COUNTRY
@@ -22,7 +22,7 @@ env:
   # - name: OPENVPN_CITY
   #   value: any-city
   - name: OPENVPN_OPTS
-    value: "--inactive 3600 --ping 10 --ping-exit 60"
+    value: "--inactive 3600 --ping 10 --ping-exit 60 --mute-replay-warnings"
   - name: OPENVPN_USERNAME
     valueFrom:
       secretKeyRef:
