@@ -8,7 +8,7 @@ metadata:
 spec:
   storageClassName: radarr-config
   capacity:
-    storage: 8Gi
+    storage: 1Gi
   accessModes:
     - ReadWriteMany
   hostPath:
@@ -25,4 +25,4 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 8Gi
+      storage: 1Gi
