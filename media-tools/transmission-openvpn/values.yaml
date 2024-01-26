@@ -2,9 +2,16 @@
 replicaCount: 1
 
 image:
-  repository: "haugene/transmission-openvpn"
-  tag: "latest"
-  pullPolicy: "IfNotPresent"
+  repository: haugene/transmission-openvpn
+  tag: latest
+  pullPolicy: IfNotPresent
+
+dnsPolicy: "None"
+
+dnsConfig:
+  nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
 
 env:
   - name: OPENVPN_PROVIDER
@@ -73,3 +80,13 @@ securityContext:
   capabilities:
     add:
       - NET_ADMIN
+
+podSecurityContext: {}
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

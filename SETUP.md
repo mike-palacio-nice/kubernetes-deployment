@@ -136,8 +136,8 @@ kubectl create secret generic openvpn \
 kubectl apply -f media-tools/ingress.yaml
 
 kubectl apply -f media-tools/transmission/config-pvc.yaml
-helm install transmission bananaspliff/transmission-openvpn \
-    --values media-tools/transmission/values.yaml \
+helm install transmission . \
+    --values media-tools/transmission-openvpn/values.yaml \
     --namespace plexserver
 ```
 
