@@ -4,6 +4,12 @@ metadata:
   name: longhorn-ingress
   namespace: longhorn-system
   annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    external-dns.alpha.kubernetes.io/hostname: storage.palacpl.us
+    external-dns.alpha.kubernetes.io/ttl: "120" #optional
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
     # type of authentication
     nginx.ingress.kubernetes.io/auth-type: basic
     # prevent the controller from redirecting (308) to HTTPS
@@ -16,7 +22,8 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: 10000m
 spec:
   rules:
-    - http:
+    - host: storage.palacpl.us
+      http:
         paths:
           - pathType: Prefix
             path: "/"
@@ -25,3 +32,7 @@ spec:
                 name: longhorn-frontend
                 port:
                   number: 80
+  tls:
+    - hosts:
+        - storage.palacpl.us
+      secretName: secure-tls
