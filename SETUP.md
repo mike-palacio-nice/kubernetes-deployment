@@ -192,5 +192,5 @@ kubectl -n longhorn-system apply -f longhorn/ingress.yaml
 ## Deploying Qbittorrent
 
 ```sh
-kubectl -f apply media-tools/qbittorrent
+kubectl apply -f media-tools/qbittorrent
 ```

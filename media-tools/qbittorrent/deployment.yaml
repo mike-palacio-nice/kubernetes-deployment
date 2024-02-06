@@ -87,7 +87,8 @@ spec:
             runAsNonRoot: false
             runAsUser: 0
           startupProbe:
-            failureThreshold: 3
+            failureThreshold: 10
+            periodSeconds: 10
             tcpSocket:
               port: 8080
           volumeMounts:
