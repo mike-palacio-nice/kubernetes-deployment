@@ -9,9 +9,7 @@ metadata:
 spec:
   replicas: 1
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
+    type: Recreate
   selector:
     matchLabels:
       app: qbittorrent-gluetun
@@ -41,8 +39,10 @@ spec:
                 secretKeyRef:
                   name: "openvpn"
                   key: "password"
+            - name: FIREWALL_DEBUG
+              value: "on"
             - name: FIREWALL_INPUT_PORTS
-              value: "16793"
+              value: "8080"
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
