@@ -188,3 +188,9 @@ kubectl -n longhorn-system create secret generic basic-auth --from-file=auth
 
 kubectl -n longhorn-system apply -f longhorn/ingress.yaml
 ```
+
+## Deploying Qbittorrent
+
+```sh
+kubectl -f apply media-tools/qbittorrent
+```

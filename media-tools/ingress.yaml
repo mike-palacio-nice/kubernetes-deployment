@@ -44,6 +44,14 @@ spec:
                 name: radarr
                 port:
                   number: 80
+          - path: /qbittorrent
+            pathType: Prefix
+            backend:
+              service:
+                name: qbittorrent-gluetun
+                port:
+                  number: 8080
+
   tls:
     - hosts:
         - media.palacpl.us

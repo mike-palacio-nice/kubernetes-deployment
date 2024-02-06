@@ -2,7 +2,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: qbittorrent
+  name: qbittorrent-gluetun
   namespace: plexserver
   annotations:
     metallb.universe.tf/allow-shared-ip: gluetun
