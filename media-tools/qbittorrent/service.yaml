@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: qbittorrent
+  namespace: plexserver
+  annotations:
+    metallb.universe.tf/allow-shared-ip: gluetun
+spec:
+  selector:
+    app: qbittorrent-gluetun
+  ports:
+    - port: 8080
+  type: ClusterIP

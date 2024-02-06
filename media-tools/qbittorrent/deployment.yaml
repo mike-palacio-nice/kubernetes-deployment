@@ -1,0 +1,122 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbittorrent-gluetun
+  namespace: plexserver
+  labels:
+    app: qbittorrent-gluetun
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: qbittorrent-gluetun
+  template:
+    metadata:
+      labels:
+        app: qbittorrent-gluetun
+    spec:
+      containers:
+        - name: gluetun
+          image: ghcr.io/qdm12/gluetun
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN"]
+          env:
+            - name: TZ
+              value: UTC
+            - name: DNS_KEEP_NAMESERVER
+              value: "on"
+            - name: VPN_SERVICE_PROVIDER
+              value: surfshark
+            - name: OPENVPN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "openvpn"
+                  key: "username"
+            - name: OPENVPN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "openvpn"
+                  key: "password"
+            - name: FIREWALL_INPUT_PORTS
+              value: "16793"
+          volumeMounts:
+            - name: gluetun-config
+              mountPath: /gluetun
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: "0.1"
+            limits:
+              memory: 256Mi
+              cpu: "0.5"
+        - name: qbittorrent
+          image: lscr.io/linuxserver/qbittorrent:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PUID
+              value: "65534"
+            - name: PGID
+              value: "65534"
+            - name: TZ
+              value: "Etc/UTC"
+            - name: WEBUI_PORT
+              value: "8080"
+            - name: PUID
+              value: "65534"
+            - name: PGID
+              value: "65534"
+            - name: PUID
+              value: "65534"
+            - name: PGID
+              value: "65534"
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: "0.1"
+            limits:
+              memory: 256Mi
+              cpu: "0.5"
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+          startupProbe:
+            failureThreshold: 3
+            tcpSocket:
+              port: 8080
+          volumeMounts:
+            - mountPath: /config
+              name: pvc-qbittorrent-longhorn
+            - mountPath: /downloads
+              name: plex-media
+      dnsPolicy: ClusterFirst
+      hostNetwork: false
+      restartPolicy: Always
+      securityContext:
+        fsGroupChangePolicy: Always
+        runAsNonRoot: true
+      setHostnameAsFQDN: false
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: gluetun-config-pvc
+        - name: pvc-qbittorrent-longhorn
+          persistentVolumeClaim:
+            claimName: qbittorrent-longhorn
+            readOnly: false
+        - name: plex-media
+          persistentVolumeClaim:
+            claimName: "plex-pvc"

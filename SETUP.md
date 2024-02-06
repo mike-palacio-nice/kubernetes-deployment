@@ -175,3 +175,16 @@ helm install radarr bananaspliff/radarr \
     --values media-tools/radarr/values.yaml \
     --namespace plexserver
 ```
+
+## Deploying Longhorn
+
+```sh
+helm repo add longhorn https://charts.longhorn.io &&
+helm repo update &&
+helm install longhorn longhorn/longhorn --namespace longhorn-system --create-namespace --version 1.6.0
+
+USER=<USERNAME_HERE>; PASSWORD=<PASSWORD_HERE>; echo "${USER}:$(openssl passwd -stdin -apr1 <<< ${PASSWORD})" >> auth
+kubectl -n longhorn-system create secret generic basic-auth --from-file=auth
+
+kubectl -n longhorn-system apply -f longhorn/ingress.yaml
+```
