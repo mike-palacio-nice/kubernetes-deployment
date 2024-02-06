@@ -96,6 +96,7 @@ spec:
               name: qbittorrent-longhorn
             - mountPath: /downloads
               name: plex-media
+              subPath: downloads
       dnsPolicy: ClusterFirst
       hostNetwork: false
       restartPolicy: Always
