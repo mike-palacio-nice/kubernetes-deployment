@@ -101,7 +101,7 @@ spec:
             - mountPath: /downloads
               name: plex-media
               subPath: media
-      dnsPolicy: Default
+      dnsPolicy: ClusterFirst
       hostNetwork: false
       restartPolicy: Always
       securityContext:
