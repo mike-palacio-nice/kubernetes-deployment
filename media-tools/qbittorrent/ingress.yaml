@@ -14,7 +14,7 @@ metadata:
   namespace: plexserver
 spec:
   rules:
-    - host: media.palacpl.us
+    - host: qbittorrent.palacpl.us
   ingressClassName: nginx
   defaultBackend:
     service:
