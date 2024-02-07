@@ -47,8 +47,6 @@ spec:
               value: "off"
             - name: DNS_KEEP_NAMESERVER
               value: "on"
-            - name: FIREWALL_OUTBOUND_SUBNETS
-              value: "10.0.0.0/8"
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
@@ -103,7 +101,7 @@ spec:
             - mountPath: /downloads
               name: plex-media
               subPath: media
-      dnsPolicy: ClusterFirst
+      dnsPolicy: None
       hostNetwork: false
       restartPolicy: Always
       securityContext:
