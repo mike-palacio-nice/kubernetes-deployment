@@ -43,6 +43,10 @@ spec:
               value: "8080"
             - name: FIREWALL_VPN_INPUT_PORTS
               value: "16793"
+            - name: DOT
+              value: "off"
+            - name: DNS_KEEP_NAMESERVER
+              value: "on"
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
@@ -96,7 +100,7 @@ spec:
               name: qbittorrent-longhorn
             - mountPath: /downloads
               name: plex-media
-              subPath: downloads
+              subPath: media
       dnsPolicy: ClusterFirst
       hostNetwork: false
       restartPolicy: Always
