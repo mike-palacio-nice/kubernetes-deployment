@@ -9,7 +9,7 @@ metadata:
     # If you encounter a redirect loop or are getting a 307 response code
     # then you need to force the nginx ingress to connect to the backend using HTTPS.
     #
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     external-dns.alpha.kubernetes.io/hostname: argocd.palacpl.us
     external-dns.alpha.kubernetes.io/ttl: "120" #optional
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
@@ -25,7 +25,7 @@ spec:
               service:
                 name: argocd-server
                 port:
-                  name: https
+                  name: http
   tls:
     - hosts:
         - argocd.palacpl.us
