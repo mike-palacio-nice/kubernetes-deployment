@@ -29,7 +29,7 @@ volumeMounts:
     mountPath: "/config"
     subPath: "configs/radarr" # Path /mnt/ssd/media/configs/radarr where radarr writes the configuration
   - name: media
-    mountPath: "/downloads/transmission"
+    mountPath: "/downloads"
     subPath: media # Path /mnt/ssd/media/downloads/transmission where radarr picks up downloaded movies
   - name: media
     mountPath: "/movies"
