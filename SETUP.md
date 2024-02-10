@@ -119,7 +119,7 @@ helm install plex charts/kube-plex --namespace plexserver
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 ```
 
-## Deploying Transmission with OpenVPN
+## Deploying Transmission with OpenVPN (Deprecated)
 
 ```sh
 
@@ -204,4 +204,12 @@ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}
 
 kubectl apply -f argocd/ingress.yaml
 
+```
+
+## Deploying AMD Plugin
+
+This plugin allows passthrough for the AMD GPU to K8s resources
+
+```sh
+helm install amd-gpu helm/amd-gpu/
 ```

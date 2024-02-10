@@ -11,7 +11,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 1Gi
   storageClassName: longhorn
   volumeMode: Filesystem
 ---
@@ -27,6 +27,6 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 1Gi
   storageClassName: longhorn
   volumeMode: Filesystem
