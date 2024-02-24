@@ -28,7 +28,7 @@ data:
   # be allowed.
   #
   # Feature state: Beta
-  application.namespaces: ns1, ns2, ns3
+  application.namespaces: default, plexserver
 
   ## Controller Properties
   # Repo server RPC call timeout seconds.
@@ -218,4 +218,4 @@ data:
   # Set the logging format. One of: text|json (default "text")
   notificationscontroller.log.format: "text"
   # Enable self-service notifications config. Used in conjunction with apps-in-any-namespace. (default "false")
-  notificationscontroller.selfservice.enabled: "false"
+  notificationscontroller.selfservice.enabled: "true"

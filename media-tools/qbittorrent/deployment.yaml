@@ -59,10 +59,10 @@ spec:
               mountPath: /gluetun
           resources:
             requests:
-              memory: 128Mi
+              memory: 1Gi
               cpu: "0.1"
             limits:
-              memory: 256Mi
+              memory: 1Gi
               cpu: "0.5"
         - name: qbittorrent
           image: lscr.io/linuxserver/qbittorrent:latest
