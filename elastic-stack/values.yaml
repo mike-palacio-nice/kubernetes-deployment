@@ -21,10 +21,28 @@ eck-elasticsearch:
                   memory: 2Gi
 eck-kibana:
   enabled: true
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      external-dns.alpha.kubernetes.io/hostname: kibana.palacpl.us
+      external-dns.alpha.kubernetes.io/ttl: "120" #optional
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    pathType: Prefix
+    hosts:
+      - host: kibana.palacpl.us
+        path: "/"
+    tls:
+      enabled: true
+      secretName: secure-tls
+
   spec:
     count: 1
     elasticsearchRef:
       name: elasticsearch
+
 eck-beats:
   enabled: true
   spec:
