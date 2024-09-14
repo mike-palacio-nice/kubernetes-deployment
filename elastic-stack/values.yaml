@@ -21,6 +21,14 @@ eck-elasticsearch:
                   memory: 2Gi
 eck-kibana:
   enabled: true
+  spec:
+    count: 1
+    elasticsearchRef:
+      name: elasticsearch
+    config:
+      server:
+        publicBaseUrl: https://kibana.palacpl.us
+
   ingress:
     enabled: true
     annotations:
@@ -37,11 +45,6 @@ eck-kibana:
     tls:
       enabled: true
       secretName: secure-tls
-
-  spec:
-    count: 1
-    elasticsearchRef:
-      name: elasticsearch
 
 eck-beats:
   enabled: true
