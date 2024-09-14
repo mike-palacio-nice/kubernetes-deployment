@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: elastic-stack
+  name: eck-stack
   labels:
-    name: elastic-stack
+    name: eck-stack
 ---
 # Source: eck-operator/templates/service-account.yaml
 apiVersion: v1
@@ -12,7 +12,7 @@ kind: ServiceAccount
 automountServiceAccountToken: true
 metadata:
   name: elastic-operator
-  namespace: elastic-stack
+  namespace: eck-stack
   labels:
     control-plane: elastic-operator
     app.kubernetes.io/version: "2.14.0"
@@ -22,7 +22,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: elastic-webhook-server-cert
-  namespace: elastic-stack
+  namespace: eck-stack
   labels:
     control-plane: elastic-operator
     app.kubernetes.io/version: "2.14.0"
@@ -32,7 +32,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: elastic-operator
-  namespace: elastic-stack
+  namespace: eck-stack
   labels:
     control-plane: elastic-operator
     app.kubernetes.io/version: "2.14.0"
@@ -57,7 +57,7 @@ data:
     enable-webhook: true
     webhook-name: elastic-webhook.k8s.elastic.co
     webhook-port: 9443
-    operator-namespace: elastic-stack
+    operator-namespace: eck-stack
     enable-leader-election: true
     elasticsearch-observation-interval: 10s
     ubi-only: false
@@ -403,14 +403,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: elastic-operator
-    namespace: elastic-stack
+    namespace: eck-stack
 ---
 # Source: eck-operator/templates/webhook.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: elastic-webhook-server
-  namespace: elastic-stack
+  namespace: eck-stack
   labels:
     control-plane: elastic-operator
     app.kubernetes.io/version: "2.14.0"
@@ -427,7 +427,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: elastic-operator
-  namespace: elastic-stack
+  namespace: eck-stack
   labels:
     control-plane: elastic-operator
     app.kubernetes.io/version: "2.14.0"
@@ -516,7 +516,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-agent-k8s-elastic-co-v1alpha1-agent
     failurePolicy: Ignore
     name: elastic-agent-validation-v1alpha1.k8s.elastic.co
@@ -536,7 +536,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-apm-k8s-elastic-co-v1-apmserver
     failurePolicy: Ignore
     name: elastic-apm-validation-v1.k8s.elastic.co
@@ -556,7 +556,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-apm-k8s-elastic-co-v1beta1-apmserver
     failurePolicy: Ignore
     name: elastic-apm-validation-v1beta1.k8s.elastic.co
@@ -576,7 +576,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-beat-k8s-elastic-co-v1beta1-beat
     failurePolicy: Ignore
     name: elastic-beat-validation-v1beta1.k8s.elastic.co
@@ -596,7 +596,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-enterprisesearch-k8s-elastic-co-v1-enterprisesearch
     failurePolicy: Ignore
     name: elastic-ent-validation-v1.k8s.elastic.co
@@ -616,7 +616,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-enterprisesearch-k8s-elastic-co-v1beta1-enterprisesearch
     failurePolicy: Ignore
     name: elastic-ent-validation-v1beta1.k8s.elastic.co
@@ -636,7 +636,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-elasticsearch-k8s-elastic-co-v1-elasticsearch
     failurePolicy: Ignore
     name: elastic-es-validation-v1.k8s.elastic.co
@@ -656,7 +656,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-elasticsearch-k8s-elastic-co-v1beta1-elasticsearch
     failurePolicy: Ignore
     name: elastic-es-validation-v1beta1.k8s.elastic.co
@@ -676,7 +676,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-ems-k8s-elastic-co-v1alpha1-mapsservers
     failurePolicy: Ignore
     name: elastic-ems-validation-v1alpha1.k8s.elastic.co
@@ -696,7 +696,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-kibana-k8s-elastic-co-v1-kibana
     failurePolicy: Ignore
     name: elastic-kb-validation-v1.k8s.elastic.co
@@ -716,7 +716,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-kibana-k8s-elastic-co-v1beta1-kibana
     failurePolicy: Ignore
     name: elastic-kb-validation-v1beta1.k8s.elastic.co
@@ -736,7 +736,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-autoscaling-k8s-elastic-co-v1alpha1-elasticsearchautoscaler
     failurePolicy: Ignore
     name: elastic-esa-validation-v1alpha1.k8s.elastic.co
@@ -756,7 +756,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-scp-k8s-elastic-co-v1alpha1-stackconfigpolicies
     failurePolicy: Ignore
     name: elastic-scp-validation-v1alpha1.k8s.elastic.co
@@ -776,7 +776,7 @@ webhooks:
   - clientConfig:
       service:
         name: elastic-webhook-server
-        namespace: elastic-stack
+        namespace: eck-stack
         path: /validate-logstash-k8s-elastic-co-v1alpha1-logstash
     failurePolicy: Ignore
     name: elastic-logstash-validation-v1alpha1.k8s.elastic.co

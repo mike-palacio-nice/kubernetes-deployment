@@ -1,51 +1,30 @@
 ---
 eck-elasticsearch:
   nodeSets:
-    - name: default
-      count: 3
-      config:
-        # Comment out when setting the vm.max_map_count via initContainer, as these are mutually exclusive.
-        # For production workloads, it is strongly recommended to increase the kernel setting vm.max_map_count to 262144
-        # and leave node.store.allow_mmap unset.
-        # ref: https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-virtual-memory.html
-        #
-        node.store.allow_mmap: false
-      podTemplate:
-        spec:
-          containers:
-            - name: elasticsearch
-              resources:
-                limits:
-                  memory: 2Gi
-                requests:
-                  memory: 2Gi
+  - name: default
+    count: 3
+    config:
+      # Comment out when setting the vm.max_map_count via initContainer, as these are mutually exclusive.
+      # For production workloads, it is strongly recommended to increase the kernel setting vm.max_map_count to 262144
+      # and leave node.store.allow_mmap unset.
+      # ref: https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-virtual-memory.html
+      #
+      node.store.allow_mmap: false
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 2Gi
 eck-kibana:
   enabled: true
   spec:
     count: 1
     elasticsearchRef:
       name: elasticsearch
-    config:
-      server:
-        publicBaseUrl: https://kibana.palacpl.us
-
-  ingress:
-    enabled: true
-    annotations:
-      kubernetes.io/ingress.class: "nginx"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      cert-manager.io/cluster-issuer: "letsencrypt-prod"
-      external-dns.alpha.kubernetes.io/hostname: kibana.palacpl.us
-      external-dns.alpha.kubernetes.io/ttl: "120" #optional
-      external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
-    pathType: Prefix
-    hosts:
-      - host: kibana.palacpl.us
-        path: "/"
-    tls:
-      enabled: true
-      secretName: secure-tls
-
 eck-beats:
   enabled: true
   spec:
@@ -53,12 +32,12 @@ eck-beats:
     daemonSet: null
     config:
       filebeat.inputs:
-        - type: log
-          paths:
-            - /data/logstash-tutorial.log
+      - type: log
+        paths:
+          - /data/logstash-tutorial.log
       processors:
-        - add_host_metadata: {}
-        - add_cloud_metadata: {}
+      - add_host_metadata: {}
+      - add_cloud_metadata: {}
       output.logstash:
         # This needs to be {{logstash-name}}-ls-beats:5044
         hosts: ["logstash-ls-beats-ls-beats:5044"]
@@ -70,11 +49,7 @@ eck-beats:
             - name: download-tutorial
               image: curlimages/curl
               command: ["/bin/sh"]
-              args:
-                [
-                  "-c",
-                  "curl -L https://download.elastic.co/demos/logstash/gettingstarted/logstash-tutorial.log.gz | gunzip -c > /data/logstash-tutorial.log",
-                ]
+              args: ["-c", "curl -L https://download.elastic.co/demos/logstash/gettingstarted/logstash-tutorial.log.gz | gunzip -c > /data/logstash-tutorial.log"]
               volumeMounts:
                 - name: data
                   mountPath: /data
@@ -137,19 +112,3 @@ eck-logstash:
               name: "filebeat"
               protocol: TCP
               targetPort: 5044
-
-eck-enterprise-search:
-  enabled: false
-
-eck-apm-server:
-  enabled: false
-
-# If enabled, will use the eck-agent chart and deploy an Elastic Agent instance.
-#
-eck-agent:
-  enabled: false
-
-# If enabled, will use the eck-fleet-server chart and deploy a Fleet Server resource.
-#
-eck-fleet-server:
-  enabled: false
