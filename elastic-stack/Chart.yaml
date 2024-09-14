@@ -33,7 +33,7 @@ dependencies:
     repository: https://helm.elastic.co
     version: 0.12.1
 description: Elastic Stack managed by the ECK Operator
-kubeVersion: ">= 1.21.0-0"
+# kubeVersion: ">= 1.21.0-0"
 name: eck-stack
 type: application
 version: 0.12.1
