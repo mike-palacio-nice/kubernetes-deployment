@@ -217,10 +217,14 @@ helm install amd-gpu helm/amd-gpu/
 ## Deploying ELK Stack
 
 ```sh
+## Install CRDs
+kubectl create -f https://download.elastic.co/downloads/eck/2.14.0/crds.yaml
+kubectl apply -f kubernetes-deployment/elastic-stack/operator.yaml
+
 helm repo add elastic https://helm.elastic.co
 helm repo update
 
 # Install an eck-managed Elasticsearch, Kibana, Beats and Logstash using custom values.
 helm install eck-stack elastic/eck-stack \
-    --values https://raw.githubusercontent.com/elastic/cloud-on-k8s/2.14/deploy/eck-stack/examples/logstash/basic-eck.yaml -n elastic-stack
+    --values kubernetes-deployment/elastic-stack/values.yaml -n elastic-stack
 ```
