@@ -1,5 +1,6 @@
 ---
 eck-elasticsearch:
+  fullnameOverride: elasticsearch
   nodeSets:
     - name: default
       count: 3
