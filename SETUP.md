@@ -213,3 +213,14 @@ This plugin allows passthrough for the AMD GPU to K8s resources
 ```sh
 helm install amd-gpu helm/amd-gpu/
 ```
+
+## Deploying ELK Stack
+
+```sh
+helm repo add elastic https://helm.elastic.co
+helm repo update
+
+# Install an eck-managed Elasticsearch, Kibana, Beats and Logstash using custom values.
+helm install eck-stack elastic/eck-stack \
+    --values https://raw.githubusercontent.com/elastic/cloud-on-k8s/2.14/deploy/eck-stack/examples/logstash/basic-eck.yaml -n elastic-stack
+```
