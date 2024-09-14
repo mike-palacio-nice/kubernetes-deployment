@@ -219,12 +219,7 @@ helm install amd-gpu helm/amd-gpu/
 ```sh
 ## Install CRDs
 kubectl create -f https://download.elastic.co/downloads/eck/2.14.0/crds.yaml
-kubectl apply -f kubernetes-deployment/elastic-stack/operator.yaml
-
-helm repo add elastic https://helm.elastic.co
-helm repo update
-
-# Install an eck-managed Elasticsearch, Kibana, Beats and Logstash using custom values.
-helm install eck-stack elastic/eck-stack \
-    --values kubernetes-deployment/elastic-stack/values.yaml -n elastic-stack
+kubectl apply -f kubernetes-deployment/elastic-setup/operator.yaml
 ```
+
+Installation is setup using ArgoCD with a Helm Chart installation
