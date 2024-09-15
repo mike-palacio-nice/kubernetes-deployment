@@ -35,9 +35,9 @@ eck-kibana:
     enabled: true
     annotations:
       kubernetes.io/ingress.class: "nginx"
+      kubernetes.io/tls-acme: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
       external-dns.alpha.kubernetes.io/hostname: kibana.palacpl.us
       external-dns.alpha.kubernetes.io/ttl: "120" #optional
