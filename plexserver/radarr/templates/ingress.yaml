@@ -28,6 +28,8 @@ spec:
   {{- end }}
   {{- if .Values.ingress.tls.secretName }}
     secretName: {{ .Values.ingress.tls.secretName }}
+  {{- else }}
+    secretName: {{ include "radarr.fullname" . }}-cert
   {{- end }}
   {{- end }}
   rules:
