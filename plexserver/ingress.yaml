@@ -37,21 +37,6 @@ spec:
                 name: jackett
                 port:
                   number: 80
-          - path: /radarr
-            pathType: Prefix
-            backend:
-              service:
-                name: radarr
-                port:
-                  number: 80
-          # - path: /
-          #   pathType: Prefix
-          #   backend:
-          #     service:
-          #       name: qbittorrent-gluetun
-          #       port:
-          #         number: 80
-
   tls:
     - hosts:
         - media.palacpl.us
