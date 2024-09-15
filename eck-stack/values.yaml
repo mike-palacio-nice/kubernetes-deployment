@@ -30,6 +30,10 @@ eck-kibana:
     config:
       server:
         publicBaseUrl: https://kibana.palacpl.us
+    # http:
+    #   service:
+    #     spec:
+    #       type: LoadBalancer
 
   ingress:
     enabled: true
@@ -37,6 +41,7 @@ eck-kibana:
       kubernetes.io/ingress.class: "nginx"
       kubernetes.io/tls-acme: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
       nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
       external-dns.alpha.kubernetes.io/hostname: kibana.palacpl.us
