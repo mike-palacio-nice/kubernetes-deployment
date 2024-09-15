@@ -168,7 +168,7 @@ kubectl apply -f media-tools/radarr/config-pvc.yaml
 sudo vi /etc/radarr/configs/radarr/config.xml
 (insert)
 <Config>
-  <UrlBase>/radarr</UrlBase>
+  <UrlBase>/home</UrlBase>
 </Config>
 ```
 
