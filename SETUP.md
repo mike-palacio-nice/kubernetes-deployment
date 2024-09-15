@@ -170,11 +170,9 @@ sudo vi /etc/radarr/configs/radarr/config.xml
 <Config>
   <UrlBase>/radarr</UrlBase>
 </Config>
-
-helm install radarr bananaspliff/radarr \
-    --values media-tools/radarr/values.yaml \
-    --namespace plexserver
 ```
+
+Deploy Helm chart with ArgoCD
 
 ## Deploying Longhorn
 
