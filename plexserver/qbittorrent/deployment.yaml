@@ -59,10 +59,10 @@ spec:
               mountPath: /gluetun
           resources:
             requests:
-              memory: 2Gi
+              memory: 200Mi
               cpu: "0.1"
             limits:
-              memory: 2Gi
+              memory: 500Mi
               cpu: "0.5"
         - name: qbittorrent
           image: lscr.io/linuxserver/qbittorrent:latest
@@ -80,10 +80,10 @@ spec:
             - containerPort: 8080
           resources:
             requests:
-              memory: 1Gi
+              memory: 200Mi
               cpu: "0.1"
             limits:
-              memory: 1Gi
+              memory: 500Mi
               cpu: "0.5"
           securityContext:
             allowPrivilegeEscalation: false
