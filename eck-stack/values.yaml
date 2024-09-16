@@ -77,7 +77,7 @@ eck-beats:
         elasticsearch:
           enabled: false
         logstash:
-          hosts: ["https://logstash-ls-beats-ls-beats.eck-stack.svc:5044"]
+          hosts: ["logstash-ls-beats-ls-beats:5044"]
     daemonSet:
       podTemplate:
         spec:
