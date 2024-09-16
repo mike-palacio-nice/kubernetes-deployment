@@ -75,8 +75,9 @@ eck-beats:
         - add_cloud_metadata: {}
       output:
         elasticsearch:
-          enabled: false
+          enabled: true
         logstash:
+          enabled: false
           hosts: ["logstash-ls-beats-ls-beats:5044"]
     daemonSet:
       podTemplate:
@@ -98,6 +99,13 @@ eck-beats:
                   mountPath: /var/log/pods
                 - name: varlibdockercontainers
                   mountPath: /var/lib/docker/containers
+              resources:
+                requests:
+                  memory: 300Mi
+                  cpu: 100m
+                limits:
+                  memory: 400Mi
+                  cpu: 500m
           volumes:
             - name: varlogcontainers
               hostPath:
