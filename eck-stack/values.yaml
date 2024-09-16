@@ -106,36 +106,36 @@ eck-beats:
             - name: varlibdockercontainers
               hostPath:
                 path: /var/lib/docker/containers
-    deployment:
-      podTemplate:
-        spec:
-          automountServiceAccountToken: true
-          initContainers:
-            - name: download-tutorial
-              image: curlimages/curl
-              command: ["/bin/sh"]
-              args:
-                [
-                  "-c",
-                  "curl -L https://download.elastic.co/demos/logstash/gettingstarted/logstash-tutorial.log.gz | gunzip -c > /data/logstash-tutorial.log",
-                ]
-              volumeMounts:
-                - name: data
-                  mountPath: /data
-          containers:
-            - name: filebeat
-              securityContext:
-                runAsUser: 1000
-              volumeMounts:
-                - name: data
-                  mountPath: /data
-                - name: beat-data
-                  mountPath: /usr/share/filebeat/data
-          volumes:
-            - name: data
-              emptydir: {}
-            - name: beat-data
-              emptydir: {}
+    # deployment:
+    #   podTemplate:
+    #     spec:
+    #       automountServiceAccountToken: true
+    #       initContainers:
+    #         - name: download-tutorial
+    #           image: curlimages/curl
+    #           command: ["/bin/sh"]
+    #           args:
+    #             [
+    #               "-c",
+    #               "curl -L https://download.elastic.co/demos/logstash/gettingstarted/logstash-tutorial.log.gz | gunzip -c > /data/logstash-tutorial.log",
+    #             ]
+    #           volumeMounts:
+    #             - name: data
+    #               mountPath: /data
+    #       containers:
+    #         - name: filebeat
+    #           securityContext:
+    #             runAsUser: 1000
+    #           volumeMounts:
+    #             - name: data
+    #               mountPath: /data
+    #             - name: beat-data
+    #               mountPath: /usr/share/filebeat/data
+    #       volumes:
+    #         - name: data
+    #           emptydir: {}
+    #         - name: beat-data
+    #           emptydir: {}
 eck-logstash:
   enabled: true
   # This is required to be able to set the logstash
