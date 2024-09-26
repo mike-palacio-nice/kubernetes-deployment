@@ -49,6 +49,8 @@ spec:
             #   value: "on"
             - name: UPDATER_PERIOD
               value: 20m
+            - name: SERVER_COUNTRIES
+              value: "United States"
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
