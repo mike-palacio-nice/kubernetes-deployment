@@ -45,6 +45,7 @@ helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version
 ```sh
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
 
+kubectl create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL --from-literal=apiToken=YOUR_API_TOKEN
 kubectl apply -f certmanager/tls-clusterissuer.yaml
 kubectl apply -f certmanager/tls-certificate.yaml
 ```
@@ -66,6 +67,10 @@ kubectl apply -f - -n kube-system
 
 helm repo add metallb https://metallb.github.io/metallb
 helm install metallb metallb/metallb
+
+## Create the address pool and L2 advertisement
+kubectl apply -f metallb/ip-address-pool.yaml
+kubectl apply -f metallb/l2-advertisement.yaml
 ```
 
 ## Deploying CloudFlare Ingress Controller
@@ -80,11 +85,13 @@ helm upgrade --install --wait \
 
 ## Deploying External-DNS
 
+```sh
 kubectl apply -f cloudflare/cloudflare-api-key.yaml
 kubectl apply -f cloudflare/cloudflare-api-token.yaml
 
-kubectl create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL
+kubectl create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL --from-literal=apiToken=YOUR_API_TOKEN
 kubectl apply -f external-dns/deployment.yaml
+```
 
 ## Deploying Plex
 
