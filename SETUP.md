@@ -3,19 +3,19 @@
 (Initial Setup)[https://deploy.equinix.com/blog/installing-and-deploying-kubernetes-on-ubuntu/]
 
 ```sh
-kubeadm reset
+sudo kubeadm reset
 
-systemctl stop kubelet
-systemctl stop docker
-rm -rf /var/lib/cni/
-rm -rf /var/lib/kubelet/*
-rm -rf /etc/cni/
-ifconfig cni0 down
-ifconfig flannel.1 down
-ifconfig docker0 down
+sudo systemctl stop kubelet
+sudo systemctl stop docker
+sudo rm -rf /var/lib/cni/
+sudo rm -rf /var/lib/kubelet/*
+sudo rm -rf /etc/cni/
+sudo ifconfig cni0 down
+sudo ifconfig flannel.1 down
+sudo ifconfig docker0 down
 
-systemctl restart kubelet
-systemctl restart containerd
+sudo systemctl restart kubelet
+sudo systemctl restart containerd
 
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 
@@ -81,8 +81,10 @@ helm upgrade --install --wait \
 ## Deploying External-DNS
 
 kubectl apply -f cloudflare/cloudflare-api-key.yaml
+kubectl apply -f cloudflare/cloudflare-api-token.yaml
 
-kubectl apply -f external-dns/external-dns-deployment.yaml
+kubectl create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL
+kubectl apply -f external-dns/deployment.yaml
 
 ## Deploying Plex
 
@@ -103,14 +105,6 @@ sudo systemctl restart nfs-kernel-server
 helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
 helm repo update
 helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system --set kubeletDir=/var/lib/kubelet
-```
-
-## Deploying Kube-Plex
-
-See (kube-plex)[https://github.com/mike-palacio-nice/kube-plex#readme]
-
-```sh
-helm install plex charts/kube-plex --namespace plexserver
 ```
 
 ## Deploying Kubernetes Dashboard
@@ -180,7 +174,7 @@ kubectl apply -f argocd/ingress.yaml
 
 ```
 
-## Deploying AMD Plugin
+## Deploying AMD Plugin (Not working)
 
 This plugin allows passthrough for the AMD GPU to K8s resources
 
