@@ -55,7 +55,7 @@ spec:
             - --domain-filter=example.com # (optional) limit to only example.com domains; change to match the zone created above.
             - --zone-id-filter=023e105f4ecef8ad9ca31a8372d0c353 # (optional) limit to a specific zone.
             - --provider=cloudflare
-            - --cloudflare-proxied=false # (optional) enable the proxy feature of Cloudflare (DDOS protection, CDN...)
+            # - --cloudflare-proxied # (optional) enable the proxy feature of Cloudflare (DDOS protection, CDN...)
             - --cloudflare-dns-records-per-page=5000 # (optional) configure how many DNS records to fetch per request
             - --cloudflare-region-key="eu" # (optional) configure which region can decrypt HTTPS requests
           env:
