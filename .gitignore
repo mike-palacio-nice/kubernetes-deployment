@@ -1,3 +1,6 @@
 ## Helm
 Chart.lock
 charts/
+
+## Kubernetes
+.secrets.md

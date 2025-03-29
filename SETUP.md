@@ -12,7 +12,7 @@ sudo rm -rf /var/lib/kubelet/*
 sudo rm -rf /etc/cni/
 sudo ifconfig cni0 down
 sudo ifconfig flannel.1 down
-sudo ifconfig docker0 down
+# sudo ifconfig docker0 down
 
 sudo systemctl restart kubelet
 sudo systemctl restart containerd
@@ -23,32 +23,76 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
-
 kubectl taint nodes master-node node-role.kubernetes.io/control-plane-
+```
+## Install Pod Network - Flannel
+```sh
+# Needs manual creation of namespace to avoid helm error
+kubectl create ns kube-flannel
+kubectl label --overwrite ns kube-flannel pod-security.kubernetes.io/enforce=privileged
 
-sudo ip link delete cni0 type bridge
+helm repo add flannel https://flannel-io.github.io/flannel/
+helm install flannel --set podCidr="10.244.0.0/16" --namespace kube-flannel flannel/flannel
+
+
+## Prefer Helm?
+# kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+
+# kubectl taint nodes master-node node-role.kubernetes.io/control-plane-
+
+# sudo ip link delete cni0 type bridge
 ```
 
 ## Deploying Nginx Ingress Controller
 
-(Source)[https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/metallb-plus-nginx-ingress]
-
+<!-- (Source)[https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/metallb-plus-nginx-ingress]
 ```sh
-helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.2
+helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.2 -->
+```sh
+(Source)[https://kubernetes.github.io/ingress-nginx/deploy/]
+```sh
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
 ```
 
 ## Deploying Cert Manager
 
-(Source)[https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/cert-manager]
+<!-- (Source)[https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/cert-manager]
 
 ```sh
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
 
-kubectl --namespace cert-manager create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL --from-literal=apiToken=YOUR_API_TOKEN
+kubectl --namespace cert-manager create secret generic cloudflare-api-key \
+  --from-literal=apiKey=YOUR_API_KEY \
+  --from-literal=email=YOUR_CLOUDFLARE_EMAIL \
+  --from-literal=apiToken=YOUR_API_TOKEN
+
+kubectl apply -f certmanager/tls-clusterissuer.yaml
+kubectl apply -f certmanager/tls-certificate.yaml
+``` -->
+
+(Source)[https://cert-manager.io/docs/installation/helm/]
+```sh
+helm repo add jetstack https://charts.jetstack.io --force-update
+
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.17.0 \
+  --set crds.enabled=true
+
+kubectl --namespace cert-manager create secret generic cloudflare-api-key \
+  --from-literal=apiKey=YOUR_API_KEY \
+  --from-literal=email=YOUR_CLOUDFLARE_EMAIL \
+  --from-literal=apiToken=YOUR_API_TOKEN
+
 kubectl apply -f certmanager/tls-clusterissuer.yaml
 kubectl apply -f certmanager/tls-certificate.yaml
 ```
+
+
 
 ## Deploying MetalLb
 
@@ -64,9 +108,12 @@ kubectl diff -f - -n kube-system
 kubectl get configmap kube-proxy -n kube-system -o yaml | \
 sed -e "s/strictARP: false/strictARP: true/" | \
 kubectl apply -f - -n kube-system
+```
+It might be a good idea to restart kube-proxy here.
 
-helm repo add metallb https://metallb.github.io/metallb
-helm install metallb metallb/metallb
+```sh
+helm repo add metallb https://metallb.github.io/metallb --force-update
+helm install metallb metallb/metallb --namespace metallb --create-namespace
 
 ## Create the address pool and L2 advertisement
 kubectl apply -f metallb/ip-address-pool.yaml
