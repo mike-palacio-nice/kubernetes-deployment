@@ -1,3 +1,5 @@
+## This has been replaced by a helm chart
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:

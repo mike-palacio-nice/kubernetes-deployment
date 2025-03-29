@@ -120,8 +120,7 @@ kubectl apply -f metallb/ip-address-pool.yaml
 kubectl apply -f metallb/l2-advertisement.yaml
 ```
 
-## Deploying CloudFlare Ingress Controller
-
+## Deploying CloudFlare Ingress Controller (this may not be needed as of 2025-03-29)
 ```sh
 helm upgrade --install --wait \
   -n cloudflare-tunnel-ingress-controller --create-namespace \
@@ -136,6 +135,17 @@ helm upgrade --install --wait \
 kubectl create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL --from-literal=apiToken=YOUR_API_TOKEN
 kubectl apply -f external-dns/deployment.yaml
 ```
+(Source)[https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/cloudflare.md]
+```sh
+kubectl create namespace external-dns
+kubectl --namespace external-dns create secret generic cloudflare-api-key \
+  --from-literal=apiKey=YOUR_API_KEY
+
+helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
+helm repo update
+helm upgrade --install external-dns external-dns/external-dns --values external-dns/values.yaml --namespace external-dns
+```
+
 
 ### NFS Setup
 
