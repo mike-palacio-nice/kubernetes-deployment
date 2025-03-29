@@ -45,7 +45,7 @@ helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version
 ```sh
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
 
-kubectl create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL --from-literal=apiToken=YOUR_API_TOKEN
+kubectl --namespace cert-manager create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL --from-literal=apiToken=YOUR_API_TOKEN
 kubectl apply -f certmanager/tls-clusterissuer.yaml
 kubectl apply -f certmanager/tls-certificate.yaml
 ```
@@ -86,16 +86,9 @@ helm upgrade --install --wait \
 ## Deploying External-DNS
 
 ```sh
-kubectl apply -f cloudflare/cloudflare-api-key.yaml
-kubectl apply -f cloudflare/cloudflare-api-token.yaml
-
 kubectl create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL --from-literal=apiToken=YOUR_API_TOKEN
 kubectl apply -f external-dns/deployment.yaml
 ```
-
-## Deploying Plex
-
-(Source)[https://www.debontonline.com/2021/01/part-14-deploy-plexserver-yaml-with.html]
 
 ### NFS Setup
 

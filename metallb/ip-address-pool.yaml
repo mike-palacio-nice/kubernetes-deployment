@@ -5,4 +5,4 @@ metadata:
   name: metallb-address-pool
 spec:
   addresses:
-  - 192.168.1.50-192.168.1.80
+  - 192.168.1.300-192.168.1.400
