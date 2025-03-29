@@ -131,10 +131,11 @@ helm upgrade --install --wait \
 
 ## Deploying External-DNS
 
-```sh
+<!-- ```sh
 kubectl create secret generic cloudflare-api-key --from-literal=apiKey=YOUR_API_KEY --from-literal=email=YOUR_CLOUDFLARE_EMAIL --from-literal=apiToken=YOUR_API_TOKEN
 kubectl apply -f external-dns/deployment.yaml
-```
+``` -->
+
 (Source)[https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/cloudflare.md]
 ```sh
 kubectl create namespace external-dns
@@ -146,6 +147,22 @@ helm repo update
 helm upgrade --install external-dns external-dns/external-dns --values external-dns/values.yaml --namespace external-dns
 ```
 
+## Deploying ArgoCD
+
+(Source)[https://artifacthub.io/packages/helm/argo/argo-cd]
+```sh
+helm repo add argo https://argoproj.github.io/argo-helm
+helm install my-argo-cd argo/argo-cd --version 7.8.15 --values argocd/values.yaml
+```
+
+```sh
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+kubectl apply -f argocd/ingress.yaml
+
+```
 
 ### NFS Setup
 
@@ -220,16 +237,6 @@ kubectl -n longhorn-system apply -f longhorn/ingress.yaml
 kubectl apply -f media-tools/qbittorrent
 ```
 
-## Deploying ArgoCD
-
-```sh
-kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-
-kubectl apply -f argocd/ingress.yaml
-
-```
 
 ## Deploying AMD Plugin (Not working)
 

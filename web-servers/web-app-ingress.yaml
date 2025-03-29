@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nginx-ingress
+  namespace: web-servers
   annotations:
     external-dns.alpha.kubernetes.io/hostname: web-app.palacpl.us
     external-dns.alpha.kubernetes.io/ttl: "120" #optional
