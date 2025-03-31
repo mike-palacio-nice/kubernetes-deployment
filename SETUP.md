@@ -152,7 +152,7 @@ helm upgrade --install external-dns external-dns/external-dns --values external-
 (Source)[https://artifacthub.io/packages/helm/argo/argo-cd]
 ```sh
 helm repo add argo https://argoproj.github.io/argo-helm
-helm install my-argo-cd argo/argo-cd --version 7.8.15 --values argocd/values.yaml
+helm install argocd argo/argo-cd --version 7.8.15 --values argocd/values.yaml --namespace argocd --create-namespace
 ```
 
 ```sh

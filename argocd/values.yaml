@@ -6,10 +6,13 @@ global:
 configs:
   params:
     server.insecure: true
+    application.namespaces: ""
 
 server:
   service:
-    type: LoadBalancer
+    type: NodePort
+    nodePortHttp: 30080
+    nodePortHttps: 30443
 
   ingress:
     enabled: true
