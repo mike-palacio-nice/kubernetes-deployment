@@ -200,7 +200,7 @@ sudo vi /etc/jackett/configs/jackett/Jackett/ServerConfig.json
 }
 
 helm install jackett bananaspliff/jackett \
-    --values media-tools/jackett/values.yaml \
+    --values plex/jackett/values.yaml \
     --namespace plexserver
 ```
 
@@ -215,8 +215,6 @@ sudo vi /etc/radarr/configs/radarr/config.xml
   <UrlBase>/home</UrlBase>
 </Config>
 ```
-
-Deploy Helm chart with ArgoCD
 
 ## Deploying Longhorn
 
@@ -259,4 +257,17 @@ helm repo update
 # Install an eck-managed Elasticsearch, Kibana, Beats and Logstash using custom values.
 helm install eck-stack elastic/eck-stack \
     --values kubernetes-deployment/eck-stack/values.yaml -n elastic-stack
+```
+
+
+## Installing S3 CSI Driver
+
+```sh
+helm repo add aws-mountpoint-s3-csi-driver https://awslabs.github.io/mountpoint-s3-csi-driver
+helm repo update
+
+helm upgrade --install aws-mountpoint-s3-csi-driver \
+    --namespace kube-system \
+    aws-mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver
+
 ```
