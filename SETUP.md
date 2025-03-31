@@ -263,6 +263,11 @@ helm install eck-stack elastic/eck-stack \
 ## Installing S3 CSI Driver
 
 ```sh
+kubectl --namespace kube-system create secret generic aws-secret \
+  --from-literal=key_id=YOUR_KEY_ID \
+  --from-literal=access_key=YOUR_KEY \
+  --from-literal=session_token=YOUR_TOKEN
+
 helm repo add aws-mountpoint-s3-csi-driver https://awslabs.github.io/mountpoint-s3-csi-driver
 helm repo update
 
@@ -270,4 +275,6 @@ helm upgrade --install aws-mountpoint-s3-csi-driver \
     --namespace kube-system \
     aws-mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver
 
+kubectl apply -f s3-csi-driver/storageClass.yaml
+kubectl apply -f s3-csi-driver/s3-pvc.yaml
 ```
