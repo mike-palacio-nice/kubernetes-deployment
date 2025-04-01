@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "jackett.fullname" . }}
+  labels:
+    app: {{ template "jackett.name" . }}
+    chart: {{ template "jackett.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "jackett.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "jackett.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+{{ toYaml .Values.volumes | indent 6 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+{{ toYaml .Values.env | indent 12 }}
+          ports:
+            - name: http
+              containerPort: 9117
+              protocol: TCP
+          volumeMounts:
+{{ toYaml .Values.volumeMounts | indent 12 }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          securityContext:
+{{ toYaml .Values.securityContext | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
