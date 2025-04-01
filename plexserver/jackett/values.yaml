@@ -26,8 +26,11 @@ env:
   - name: PGID
     value: "1000"
 
+ingress:
+  enabled: false
+
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
 
 volumes:
