@@ -232,8 +232,11 @@ kubectl -n longhorn-system apply -f longhorn/ingress.yaml
 ## Deploying Qbittorrent
 
 ```sh
-kubectl apply -f media-tools/qbittorrent
+kubectl --namespace plex create secret generic openvpn \
+  --from-literal=username={USERNAME} \
+  --from-literal=password={PASSWORD}
 ```
+Deployment with argocd
 
 
 ## Deploying AMD Plugin (Not working)
