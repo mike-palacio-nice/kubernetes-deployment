@@ -18,6 +18,7 @@ spec:
     - allow-overwrite
     - region us-west-2
     - aws-max-attempts 5 # Configure number of retries for S3 requests
+    - debug
   csi:
     driver: s3.csi.aws.com
     volumeHandle: palacplus-homeserver
