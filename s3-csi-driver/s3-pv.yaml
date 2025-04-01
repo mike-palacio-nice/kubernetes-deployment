@@ -15,6 +15,7 @@ spec:
     - uid=65534
     - gid=65534
     - allow-delete
+    - allow-overwrite
     - region us-west-2
     - aws-max-attempts 5 # Configure number of retries for S3 requests
   csi:
