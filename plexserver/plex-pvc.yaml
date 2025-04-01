@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: plex-pvc
-  namespace: plexserver
+  namespace: plex
 spec:
   storageClassName: nfs-plex-media
   accessModes: [ReadWriteMany]

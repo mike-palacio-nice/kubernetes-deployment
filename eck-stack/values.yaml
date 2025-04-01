@@ -88,7 +88,7 @@ eck-beats:
             templates:
               - condition:
                   equals:
-                    kubernetes.namespace: plexserver #Set the namespace in which your app is running, can add multiple conditions in case of more than 1 namespace.
+                    kubernetes.namespace: plex #Set the namespace in which your app is running, can add multiple conditions in case of more than 1 namespace.
                 config:
                   - type: docker
                     containers.ids:

@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: media-tools
   name: qbittorrent-longhorn
-  namespace: plexserver
+  namespace: plex
 spec:
   accessModes:
     - ReadWriteOnce
@@ -21,7 +21,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: media-tools
   name: gluetun-longhorn
-  namespace: plexserver
+  namespace: plex
 spec:
   accessModes:
     - ReadWriteOnce

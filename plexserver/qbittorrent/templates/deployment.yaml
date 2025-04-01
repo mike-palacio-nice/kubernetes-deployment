@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: qbittorrent-gluetun
-  namespace: plexserver
+  namespace: plex
   labels:
     app: qbittorrent-gluetun
 spec:

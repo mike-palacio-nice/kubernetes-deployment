@@ -201,7 +201,7 @@ sudo vi /etc/jackett/configs/jackett/Jackett/ServerConfig.json
 
 helm install jackett bananaspliff/jackett \
     --values plex/jackett/values.yaml \
-    --namespace plexserver
+    --namespace plex
 ```
 
 ## Deploying Radarr
