@@ -57,8 +57,9 @@ spec:
             readOnlyRootFilesystem: false
             runAsNonRoot: false
           volumeMounts:
-            - name: gluetun-longhorn
+            - name: s3-bucket
               mountPath: /gluetun
+              subPath: gluetun
           resources:
             requests:
               memory: 200Mi
@@ -101,7 +102,8 @@ spec:
               port: 8080
           volumeMounts:
             - mountPath: /config
-              name: qbittorrent-longhorn
+              name: s3-bucket
+              subpath: qbittorrent
             - mountPath: /downloads
               name: plex-media
               subPath: media
@@ -114,13 +116,10 @@ spec:
       setHostnameAsFQDN: false
       terminationGracePeriodSeconds: 30
       volumes:
-        - name: gluetun-longhorn
+        - name: s3-bucket
           persistentVolumeClaim:
-            claimName: gluetun-longhorn
-        - name: qbittorrent-longhorn
-          persistentVolumeClaim:
-            claimName: qbittorrent-longhorn
+            claimName: s3-pvc
             readOnly: false
         - name: plex-media
           persistentVolumeClaim:
-            claimName: "plex-pvc"
+            claimName: plex-pvc
