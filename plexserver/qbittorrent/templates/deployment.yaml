@@ -103,8 +103,8 @@ spec:
               port: 8080
           volumeMounts:
             - mountPath: /config
-              name: s3-bucket
-              subpath: qbittorrent
+              name: plex-media
+              subpath: config/qbittorrent
             - mountPath: /downloads
               name: plex-media
               subPath: media
