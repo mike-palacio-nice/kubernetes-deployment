@@ -104,7 +104,7 @@ spec:
           volumeMounts:
             - mountPath: /config
               name: plex-media
-              subpath: config/qbittorrent
+              subpath: config
             - mountPath: /downloads
               name: plex-media
               subPath: media

@@ -1,38 +1,29 @@
-{{- if .Values.ingress.enabled -}}
-{{- $fullName := include "jackett.fullname" . -}}
-{{- $ingressPath := .Values.ingress.path -}}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
-  labels:
-    app: {{ template "jackett.name" . }}
-    chart: {{ template "jackett.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-{{- with .Values.ingress.annotations }}
+  name: jackett
+  namespace: plex
   annotations:
-{{ toYaml . | indent 4 }}
-{{- end }}
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    external-dns.alpha.kubernetes.io/hostname: jackett.palacpl.us
+    external-dns.alpha.kubernetes.io/ttl: "120" #optional
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 spec:
-{{- if .Values.ingress.tls }}
-  tls:
-  {{- range .Values.ingress.tls }}
-    - hosts:
-      {{- range .hosts }}
-        - {{ . }}
-      {{- end }}
-      secretName: {{ .secretName }}
-  {{- end }}
-{{- end }}
+  ingressClassName: nginx
   rules:
-  {{- range .Values.ingress.hosts }}
-    - host: {{ . }}
+    - host: jackett.palacpl.us
       http:
         paths:
-          - path: {{ $ingressPath }}
+          - path: /
+            pathType: Prefix
             backend:
-              serviceName: {{ $fullName }}
-              servicePort: http
-  {{- end }}
-{{- end }}
+              service:
+                name: jackett
+                port:
+                  number: 80
+
+  tls:
+    - hosts:
+        - jackett.palacpl.us
+      secretName: secure-tls

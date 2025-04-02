@@ -1,51 +1,78 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "jackett.fullname" . }}
+  name: jackett
+  namespace: plex
   labels:
-    app: {{ template "jackett.name" . }}
-    chart: {{ template "jackett.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app: jackett
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
-      app: {{ template "jackett.name" . }}
-      release: {{ .Release.Name }}
+      app: jackett
   template:
     metadata:
       labels:
-        app: {{ template "jackett.name" . }}
-        release: {{ .Release.Name }}
+        app: jackett
     spec:
-      volumes:
-{{ toYaml .Values.volumes | indent 6 }}
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: jackett
+          image: lscr.io/linuxserver/jackett:latest
+          imagePullPolicy: IfNotPresent
           env:
-{{ toYaml .Values.env | indent 12 }}
+            - name: PUID
+              value: "65534"
+            - name: PGID
+              value: "65534"
+            - name: TZ
+              value: "Etc/UTC"
+            - name: AUTO_UPDATE
+              value: "true"
           ports:
-            - name: http
-              containerPort: 9117
-              protocol: TCP
-          volumeMounts:
-{{ toYaml .Values.volumeMounts | indent 12 }}
+            - containerPort: 9117
           resources:
-{{ toYaml .Values.resources | indent 12 }}
+            requests:
+              memory: 200Mi
+              cpu: "0.1"
+            limits:
+              memory: 500Mi
+              cpu: "0.5"
           securityContext:
-{{ toYaml .Values.securityContext | indent 12 }}
-    {{- with .Values.nodeSelector }}
-      nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+          startupProbe:
+            initialDelaySeconds: 30
+            failureThreshold: 10
+            periodSeconds: 10
+            tcpSocket:
+              port: 9117
+          volumeMounts:
+            - mountPath: /config
+              name: plex-media
+              subpath: config
+            - mountPath: /downloads
+              name: plex-media
+              subpath: "config/blackhole"
+      dnsPolicy: ClusterFirst
+      hostNetwork: false
+      restartPolicy: Always
+      securityContext:
+        fsGroupChangePolicy: Always
+        runAsNonRoot: true
+      setHostnameAsFQDN: false
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: s3-bucket
+          persistentVolumeClaim:
+            claimName: s3-pvc
+            readOnly: false
+        - name: plex-media
+          persistentVolumeClaim:
+            claimName: plex-pvc
