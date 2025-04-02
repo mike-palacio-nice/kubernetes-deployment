@@ -41,7 +41,7 @@ volumes:
 volumeMounts:
   - name: plex-pvc
     mountPath: "/config"
-    subPath: config
+    subPath: Radarr
   - name: plex-pvc
     mountPath: "/downloads"
     subPath: media # Path /mnt/ssd/media/downloads/transmission where radarr picks up downloaded movies
