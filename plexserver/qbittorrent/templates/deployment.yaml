@@ -96,7 +96,7 @@ spec:
             runAsNonRoot: false
             runAsUser: 0
           startupProbe:
-            initialDelaySeconds: 500
+            initialDelaySeconds: 30
             failureThreshold: 10
             periodSeconds: 10
             tcpSocket:
