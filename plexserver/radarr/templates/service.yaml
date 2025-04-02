@@ -14,7 +14,7 @@ spec:
       targetPort: 7878
       protocol: TCP
       name: http
-      nodePort: {{ .Values.service.nodePort }}
+      nodePort: 30606
   selector:
     app: {{ template "radarr.name" . }}
     release: {{ .Release.Name }}
