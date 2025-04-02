@@ -16,7 +16,8 @@ spec:
     - gid=65534
     - allow-delete
     - allow-overwrite
-    - incremental-upload
+    - dir-mode=0777
+    - file-mode=0666
     - region us-west-2
     - aws-max-attempts 5 # Configure number of retries for S3 requests
     # - debug
@@ -24,5 +25,4 @@ spec:
     driver: s3.csi.aws.com
     volumeHandle: palacplus-homeserver
     volumeAttributes:
-      bucketName: palacplus-homeserver--usw2-az1--x-s3
-      mountOptions: "--dir-mode=0777 --file-mode=0666"
+      bucketName: palacplus-homeserver
