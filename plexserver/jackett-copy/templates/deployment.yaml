@@ -55,11 +55,11 @@ spec:
               port: 9117
           volumeMounts:
             - mountPath: /config
-              name: s3-bucket
-              subpath: jackett
+              name: plex-media
+              subpath: config/jackett
             - mountPath: /downloads
-              name: s3-bucket
-              subPath: jacket-blackhole
+              name: plex-media
+              subpath: config/jackett/blackhole
       dnsPolicy: ClusterFirst
       hostNetwork: false
       restartPolicy: Always
@@ -73,3 +73,6 @@ spec:
           persistentVolumeClaim:
             claimName: s3-pvc
             readOnly: false
+        - name: plex-media
+          persistentVolumeClaim:
+            claimName: plex-pvc
