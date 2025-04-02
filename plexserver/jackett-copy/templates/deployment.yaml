@@ -1,0 +1,75 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jackett
+  namespace: plex
+  labels:
+    app: jackett
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: jackett
+  template:
+    metadata:
+      labels:
+        app: jackett
+    spec:
+      containers:
+        - name: jackett
+          image: lscr.io/linuxserver/jackett:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Etc/UTC"
+            - name: AUTO_UPDATE
+              value: "true"
+          ports:
+            - containerPort: 9117
+          resources:
+            requests:
+              memory: 200Mi
+              cpu: "0.1"
+            limits:
+              memory: 500Mi
+              cpu: "0.5"
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+          startupProbe:
+            initialDelaySeconds: 30
+            failureThreshold: 10
+            periodSeconds: 10
+            tcpSocket:
+              port: 9117
+          volumeMounts:
+            - mountPath: /config
+              name: s3-bucket
+              subpath: jackett
+            - mountPath: /downloads
+              name: s3-bucket
+              subPath: jackett/downloads
+      dnsPolicy: ClusterFirst
+      hostNetwork: false
+      restartPolicy: Always
+      securityContext:
+        fsGroupChangePolicy: Always
+        runAsNonRoot: true
+      setHostnameAsFQDN: false
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: s3-bucket
+          persistentVolumeClaim:
+            claimName: s3-pvc
+            readOnly: false
