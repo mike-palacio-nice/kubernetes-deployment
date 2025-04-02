@@ -15,6 +15,7 @@ env:
 service:
   type: NodePort
   port: 80
+  nodePort: 30002
 
 ingress:
   enabled: true
@@ -34,21 +35,18 @@ ingress:
     secretName: secure-tls
 
 volumes:
-  - name: config
+  - name: plex-pvc
     persistentVolumeClaim:
-      claimName: "radarr-config-pvc"
-  - name: media
-    persistentVolumeClaim:
-      claimName: "plex-pvc" # PersistentVolumeClaim created earlier
+      claimName: plex-pvc # PersistentVolumeClaim created earlier
 
 volumeMounts:
-  - name: config
+  - name: plex-pvc
     mountPath: "/config"
-    subPath: "configs/radarr" # Path /mnt/ssd/media/configs/radarr where radarr writes the configuration
-  - name: media
+    subPath: config
+  - name: plex-pvc
     mountPath: "/downloads"
     subPath: media # Path /mnt/ssd/media/downloads/transmission where radarr picks up downloaded movies
-  - name: media
+  - name: plex-pvc
     mountPath: "/movies"
     subPath: "library/movies" # Path /mnt/ssd/media/library/movies where radarr moves and renames the movies
 

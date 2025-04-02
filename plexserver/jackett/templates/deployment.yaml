@@ -69,10 +69,6 @@ spec:
       setHostnameAsFQDN: false
       terminationGracePeriodSeconds: 30
       volumes:
-        - name: s3-bucket
-          persistentVolumeClaim:
-            claimName: s3-pvc
-            readOnly: false
         - name: plex-media
           persistentVolumeClaim:
             claimName: plex-pvc
