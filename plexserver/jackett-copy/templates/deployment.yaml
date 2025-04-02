@@ -24,9 +24,9 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID
-              value: "1000"
+              value: "65534"
             - name: PGID
-              value: "1000"
+              value: "65534"
             - name: TZ
               value: "Etc/UTC"
             - name: AUTO_UPDATE
