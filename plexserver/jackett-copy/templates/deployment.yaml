@@ -59,7 +59,7 @@ spec:
               subpath: jackett
             - mountPath: /downloads
               name: s3-bucket
-              subPath: jackett/downloads
+              subPath: jacket-blackhole
       dnsPolicy: ClusterFirst
       hostNetwork: false
       restartPolicy: Always
