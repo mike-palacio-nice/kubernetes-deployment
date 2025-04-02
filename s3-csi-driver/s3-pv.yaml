@@ -11,11 +11,12 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: s3
   mountOptions:
-    # - allow-other
-    # - uid=65534
-    # - gid=65534
+    - allow-other
+    - uid=65534
+    - gid=65534
     - allow-delete
     - allow-overwrite
+    - incremental-upload
     - region us-west-2
     - aws-max-attempts 5 # Configure number of retries for S3 requests
     # - debug
@@ -23,5 +24,5 @@ spec:
     driver: s3.csi.aws.com
     volumeHandle: palacplus-homeserver
     volumeAttributes:
-      bucketName: palacplus-homeserver
+      bucketName: palacplus-homeserver--usw2-az1--x-s3
       mountOptions: "--dir-mode=0777 --file-mode=0666"

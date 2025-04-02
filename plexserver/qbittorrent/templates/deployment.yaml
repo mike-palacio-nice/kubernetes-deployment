@@ -72,9 +72,9 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID
-              value: "0"
+              value: "65534"
             - name: PGID
-              value: "0"
+              value: "65534"
             - name: TZ
               value: "Etc/UTC"
             - name: WEBUI_PORT
