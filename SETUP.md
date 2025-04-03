@@ -34,20 +34,11 @@ kubectl label --overwrite ns kube-flannel pod-security.kubernetes.io/enforce=pri
 helm repo add flannel https://flannel-io.github.io/flannel/
 helm install flannel --set podCidr="10.244.0.0/16" --namespace kube-flannel flannel/flannel
 
-
-## Prefer Helm?
-# kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
-
-# kubectl taint nodes master-node node-role.kubernetes.io/control-plane-
-
 # sudo ip link delete cni0 type bridge
 ```
 
 ## Deploying Nginx Ingress Controller
 
-<!-- (Source)[https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/metallb-plus-nginx-ingress]
-```sh
-helm install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.2 -->
 ```sh
 (Source)[https://kubernetes.github.io/ingress-nginx/deploy/]
 ```sh
@@ -57,20 +48,6 @@ helm upgrade --install ingress-nginx ingress-nginx \
 ```
 
 ## Deploying Cert Manager
-
-<!-- (Source)[https://github.com/morrismusumi/kubernetes/tree/main/clusters/homelab-k8s/apps/cert-manager]
-
-```sh
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
-
-kubectl --namespace cert-manager create secret generic cloudflare-api-key \
-  --from-literal=apiKey=YOUR_API_KEY \
-  --from-literal=email=YOUR_CLOUDFLARE_EMAIL \
-  --from-literal=apiToken=YOUR_API_TOKEN
-
-kubectl apply -f certmanager/tls-clusterissuer.yaml
-kubectl apply -f certmanager/tls-certificate.yaml
-``` -->
 
 (Source)[https://cert-manager.io/docs/installation/helm/]
 ```sh
@@ -91,8 +68,6 @@ kubectl --namespace cert-manager create secret generic cloudflare-api-key \
 kubectl apply -f certmanager/tls-clusterissuer.yaml
 kubectl apply -f certmanager/tls-certificate.yaml
 ```
-
-
 
 ## Deploying MetalLb
 
@@ -190,61 +165,20 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/a
 ## Deploying Jackett
 
 ```sh
-kubectl apply -f media-tools/jackett/config-pvc.yaml
-mkdir -p /mnt/ssd/media/configs/jackett/Jackett/
-
-sudo vi /etc/jackett/configs/jackett/Jackett/ServerConfig.json
-(insert)
-{
-  "BasePathOverride": "/jackett"
-}
-
-helm install jackett bananaspliff/jackett \
-    --values plex/jackett/values.yaml \
-    --namespace plex
+kubectl apply -f argocd/apps/jackett.yaml
 ```
 
 ## Deploying Radarr
 
 ```sh
-kubectl apply -f media-tools/radarr/config-pvc.yaml
-
-sudo vi /etc/radarr/configs/radarr/config.xml
-(insert)
-<Config>
-  <UrlBase>/home</UrlBase>
-</Config>
+kubectl apply -f argocd/apps/jackett.yaml
 ```
 
-## Deploying Longhorn
-
-```sh
-helm repo add longhorn https://charts.longhorn.io &&
-helm repo update &&
-helm install longhorn longhorn/longhorn --namespace longhorn-system --create-namespace -f longhorn/values.yaml
-
-USER=<USERNAME_HERE>; PASSWORD=<PASSWORD_HERE>; echo "${USER}:$(openssl passwd -stdin -apr1 <<< ${PASSWORD})" >> auth
-kubectl -n longhorn-system create secret generic basic-auth --from-file=auth
-
-kubectl -n longhorn-system apply -f longhorn/ingress.yaml
-```
 
 ## Deploying Qbittorrent
 
 ```sh
-kubectl --namespace plex create secret generic openvpn \
-  --from-literal=username={USERNAME} \
-  --from-literal=password={PASSWORD}
-```
-Deployment with argocd
-
-
-## Deploying AMD Plugin (Not working)
-
-This plugin allows passthrough for the AMD GPU to K8s resources
-
-```sh
-helm install amd-gpu helm/amd-gpu/
+kubectl apply -f argocd/apps/jackett.yaml
 ```
 
 ## Deploying ELK Stack
@@ -261,7 +195,6 @@ helm repo update
 helm install eck-stack elastic/eck-stack \
     --values kubernetes-deployment/eck-stack/values.yaml -n elastic-stack
 ```
-
 
 ## Installing S3 CSI Driver
 
