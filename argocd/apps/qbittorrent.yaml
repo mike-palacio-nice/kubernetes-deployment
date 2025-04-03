@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: jackett
+  name: qbittorrent
 spec:
   destination:
     namespace: plex
     server: https://kubernetes.default.svc
   source:
-    path: plex/jackett
+    path: plex/qbittorrent
     repoURL: https://github.com/mike-palacio-nice/kubernetes-deployment.git
     targetRevision: HEAD
     helm:
