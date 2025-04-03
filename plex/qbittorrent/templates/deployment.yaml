@@ -43,10 +43,6 @@ spec:
               value: "8080"
             - name: FIREWALL_VPN_INPUT_PORTS
               value: "16793,6881"
-            # - name: DOT
-            #   value: "off"
-            # - name: DNS_KEEP_NAMESERVER
-            #   value: "on"
             - name: UPDATER_PERIOD
               value: 20m
             - name: SERVER_COUNTRIES
@@ -101,6 +97,16 @@ spec:
             periodSeconds: 10
             tcpSocket:
               port: 8080
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - "curl -s --fail http://www.google.com > /dev/null"
+            initialDelaySeconds: 60
+            failureThreshold: 10
+            periodSeconds: 30
+            timeoutSeconds: 10
           volumeMounts:
             - mountPath: /config
               name: plex-media

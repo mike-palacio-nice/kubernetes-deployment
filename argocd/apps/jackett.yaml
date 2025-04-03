@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jackett
+spec:
+  destination:
+    namespace: plex
+    server: https://kubernetes.default.svc
+  source:
+    path: plexserver/jackett
+    repoURL: https://github.com/mike-palacio-nice/kubernetes-deployment.git
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values.yaml
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
