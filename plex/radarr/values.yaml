@@ -3,7 +3,7 @@ replicaCount: 1
 
 image:
   repository: "linuxserver/radarr"
-  tag: "arm32v7-latest" # ARM image
+  tag: 5.21.1
   pullPolicy: IfNotPresent
 
 env:
