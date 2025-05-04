@@ -106,7 +106,7 @@ spec:
                 endpoint="http://localhost:8080/api/v2/torrents/info?filter=stalled"
                 response=$(curl -s -o /dev/null -w "%{http_code}" "$endpoint")
                 body=$(curl -s "$endpoint")
-                if [ "$response" -eq 200 ] && [ "$body" = "[]" ]; then
+                if [ "$response" -eq 200 ] && [ "$(echo "$body" | jq -e '. | length == 0')" = "true" ]; then
                   exit 0
                 else
                   exit 1
