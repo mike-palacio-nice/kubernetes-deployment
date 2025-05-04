@@ -12,7 +12,6 @@ spec:
   storageClassName: s3
   mountOptions:
     - allow-root
-    - allow-other
     - allow-delete
     - allow-overwrite
     - region us-west-2
