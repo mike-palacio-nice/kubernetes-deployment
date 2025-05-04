@@ -11,7 +11,9 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: s3
   mountOptions:
-    - allow-root
+    - allow-other
+    - uid=1001
+    - gid=1001
     - allow-delete
     - allow-overwrite
     - region us-west-2
