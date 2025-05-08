@@ -44,9 +44,9 @@ spec:
             allowPrivilegeEscalation: false
             privileged: false
             readOnlyRootFilesystem: false
-            runAsGroup: 65534
+            runAsGroup: 0
             runAsNonRoot: false
-            runAsUser: 65534
+            runAsUser: 0
           startupProbe:
             initialDelaySeconds: 30
             failureThreshold: 10
