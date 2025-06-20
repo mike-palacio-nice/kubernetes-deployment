@@ -142,12 +142,12 @@ kubectl apply -f argocd/ingress.yaml
 ### NFS Setup
 
 ```sh
-sudo mkdir -p /mnt/qnap1
-sudo mount /dev/sdb /mnt/qnap1
+sudo mkdir -p /mnt/plex-media
+sudo mount /dev/sdb /mnt/plex-media
 
-sudo chown nobody:nogroup /mnt/qnap1
-sudo chmod 0777 /mnt/qnap1
-echo '/mnt/qnap1 192.168.1.3/24(rw,sync,no_subtree_check)' | sudo tee /etc/exports
+sudo chown nobody:nogroup /mnt/plex-media
+sudo chmod 0777 /mnt/plex-media
+echo '/mnt/plex-media 192.168.1.3/24(rw,sync,no_subtree_check)' | sudo tee /etc/exports
 sudo exportfs -rav
 sudo systemctl restart nfs-kernel-server
 
