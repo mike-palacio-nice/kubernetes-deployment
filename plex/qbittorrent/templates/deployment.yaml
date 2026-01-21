@@ -47,8 +47,6 @@ spec:
               value: 20m
             - name: SERVER_REGIONS
               value: "US Texas,US West,US East"
-            - name: SHADOWSOCKS
-              value: on
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
