@@ -30,25 +30,25 @@ spec:
             - name: OPENVPN_USER
               valueFrom:
                 secretKeyRef:
-                  name: openvpn
-                  key: username
+                  name: "openvpn"
+                  key: "username"
             - name: OPENVPN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: openvpn
-                  key: password
+                  name: "openvpn"
+                  key: "password"
             - name: FIREWALL_DEBUG
-              value: off
+              value: "off"
             - name: FIREWALL_INPUT_PORTS
               value: "8080"
             - name: FIREWALL_VPN_INPUT_PORTS
               value: "16793,6881"
             - name: UPDATER_PERIOD
-              value: 60m
+              value: 20m
             - name: SERVER_REGIONS
               value: "US Texas,US West,US East"
-            # - name: SHADOWSOCKS
-            #   value: on
+            - name: SHADOWSOCKS
+              value: on
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
