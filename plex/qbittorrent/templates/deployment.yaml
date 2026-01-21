@@ -105,7 +105,7 @@ spec:
               - /bin/sh
               - -c
               - |
-                endpoint="http://localhost:8080/api/v2/torrents/info?filter=stalled"
+                endpoint="http://localhost:8080/api/v2/torrents/info?filter=stalled_downloading"
                 response=$(curl -s -o /dev/null -w "%{http_code}" "$endpoint")
                 body=$(curl -s "$endpoint")
                 if [ "$response" -eq 200 ] && [ "$(echo "$body" | jq -e '. | length == 0')" = "true" ]; then
@@ -113,10 +113,10 @@ spec:
                 else
                   exit 1
                 fi
-            initialDelaySeconds: 60
-            failureThreshold: 10
+            initialDelaySeconds: 120
+            failureThreshold: 20
             periodSeconds: 30
-            timeoutSeconds: 10
+            timeoutSeconds: 60
           volumeMounts:
             - mountPath: /config
               name: plex-media
