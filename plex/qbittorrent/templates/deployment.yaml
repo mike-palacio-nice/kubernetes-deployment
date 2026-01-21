@@ -45,10 +45,8 @@ spec:
               value: "16793,6881"
             - name: UPDATER_PERIOD
               value: 20m
-            - name: SERVER_COUNTRIES
-              value: "United States"
             - name: SERVER_REGIONS
-              value: "United States"
+              value: "US East,US West,US Texas"
           securityContext:
             allowPrivilegeEscalation: true
             privileged: true
