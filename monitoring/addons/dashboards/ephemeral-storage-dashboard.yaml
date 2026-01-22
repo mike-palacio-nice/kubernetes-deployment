@@ -4,13 +4,11 @@ metadata:
   name: ephemeral-storage-dashboard
   namespace: monitoring
   labels:
-    # This MUST match the 'label' and 'labelValue' in your Grafana sidecar values
     grafana_dashboard: "1"
-spec:
-  data:
-    # The filename must end in .json
-    ephemeral-storage.json: |
-      {
-        "gnetId": 22302,
-        "datasource": "Prometheus"
-      }
+data:
+  # The filename must end in .json for the sidecar to recognize it
+  ephemeral-storage.json: |
+    {
+      "gnetId": 22302,
+      "datasource": "Prometheus"
+    }
