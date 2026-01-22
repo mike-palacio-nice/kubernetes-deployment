@@ -67,6 +67,10 @@ grafana:
         revision: 2
         datasource: Prometheus
 
+  
+  service:
+    type: NodePort
+    port: 80
   # --- Ingress Setup ---
   ingress:
     enabled: true
