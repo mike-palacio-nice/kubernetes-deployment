@@ -113,8 +113,8 @@ spec:
                 else
                   exit 1
                 fi
-            initialDelaySeconds: 120
-            failureThreshold: 20
+            initialDelaySeconds: 60
+            failureThreshold: 10
             periodSeconds: 30
             timeoutSeconds: 60
           volumeMounts:

@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: s3-backup
+spec:
+  schedule: "0 0 * * *" # Runs every night at midnight
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: rclone
+            image: rclone/rclone:latest
+            env:
+              # 1. Define the Remote Configuration via Env Vars
+              - name: RCLONE_CONFIG_REMOTE_TYPE
+                value: "s3"
+              - name: RCLONE_CONFIG_REMOTE_PROVIDER
+                value: "AWS"
+              - name: RCLONE_CONFIG_REMOTE_REGION
+                value: "us-west-2"
+              - name: RCLONE_CONFIG_REMOTE_LOCATION_CONSTRAINT
+                value: "us-west-2"
+              - name: RCLONE_CONFIG_REMOTE_ACL
+                value: "private"
+              
+              # 2. Inject Secrets from your existing Kubernetes Secret
+              - name: RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: aws-secret
+                    key: key_id
+              - name: RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: aws-secret
+                    key: access_key
+
+            # 3. The Sync Command
+            # Format is [remote-name]:[bucket-name]/[path]
+            args:
+            - sync
+            - /data
+            - "remote:palacplus-homeserver/backups/daily-sync"
+            - "--fast-list" # Saves money by reducing S3 API calls
+            - "--verbose"
+            
+            volumeMounts:
+            - name: plex-pvc
+              mountPath: /config
+              readOnly: true
+          
+          volumes:
+          - name: plex-pvc
+            persistentVolumeClaim:
+              claimName: plex-pvc
+          
+          restartPolicy: OnFailure
