@@ -24,6 +24,9 @@ grafana:
     storageClassName: "local-path"
     size: 2Gi
 
+  initChownData:
+    enabled: false
+
   # THE SIDECAR replaces 'dashboardProviders'
   sidecar:
     dashboards:
