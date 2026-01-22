@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: k8s-ephemeral-storage-metrics
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://jmcgrath207.github.io/k8s-ephemeral-storage-metrics/chart'
+    chart: k8s-ephemeral-storage-metrics
+    targetRevision: 1.19.2
+    helm:
+      values: |
+        prometheus:
+          release: grafana-prometheus
+          monitor:
+            enabled: true
+            interval: 30s
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: monitoring
