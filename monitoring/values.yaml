@@ -1,0 +1,85 @@
+# --- Prometheus (10GB Limit) ---
+prometheus:
+  prometheusSpec:
+    retention: 10d
+    retentionSize: 9GB
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+# --- Grafana (Sidecar Method) ---
+grafana:
+  admin:
+    existingSecret: "grafana-admin-credentials"
+    userKey: admin-user
+    passwordKey: admin-password
+  
+  persistence:
+    enabled: true
+    size: 2Gi
+
+  # THE SIDECAR replaces 'dashboardProviders'
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      # This allows you to organize dashboards into folders in the UI
+      provider:
+        foldersFromFilesStructure: true
+
+  # This is the easiest way to add the Ephemeral Storage dashboard now
+  dashboards:
+    default:
+      # 1. Ephemeral Storage
+      ephemeral-storage:
+        gnetId: 22302
+        revision: 1
+        datasource: Prometheus
+      
+      # 2. Node Exporter Full (Best for CPU/RAM/Network/Disk detail)
+      node-exporter:
+        gnetId: 1860
+        revision: 37
+        datasource: Prometheus
+
+      # 3. Kubernetes / Views / Global (High-level cluster health)
+      cluster-health:
+        gnetId: 15757
+        revision: 37
+        datasource: Prometheus
+
+      # 4. Kubernetes / Views / Pods (Deep dive into pod health/restarts)
+      pod-health:
+        gnetId: 15760
+        revision: 28
+        datasource: Prometheus
+
+      # 5. Persistent Volumes (Monitor your local PVC usage)
+      pvc-usage:
+        gnetId: 13646
+        revision: 2
+        datasource: Prometheus
+
+  # --- Ingress Setup ---
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      external-dns.alpha.kubernetes.io/hostname: grafana.palacpl.us
+      external-dns.alpha.kubernetes.io/ttl: "120"
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: false
+    hosts:
+      - grafana.palacpl.us
+    path: /
+    tls:
+      - secretName: secure-tls
+        hosts:
+          - grafana.palacpl.us
