@@ -40,16 +40,28 @@ spec:
             # Format is [remote-name]:[bucket-name]/[path]
             args:
             - sync
-            - /data
-            - "remote:palacplus-homeserver/backups/daily-sync"
+            - /backup
+            - "remote:palacplus-homeserver/backups"
             - "--fast-list" # Saves money by reducing S3 API calls
             - "--verbose"
             
             volumeMounts:
             - name: plex-pvc
-              mountPath: /config
+              mountPath: /backup/radarr
+              subPath: Radarr
               readOnly: true
-          
+            - name: plex-pvc
+              mountPath: /backup/qbittorrent
+              subPath: qBittorrent
+              readOnly: true
+            - name: plex-pvc
+              mountPath: /backup/jackett
+              subPath: Jackett
+              readOnly: true
+            - name: plex-pvc
+              mountPath: /backup/gluetun
+              subPath: gluetun
+              readOnly: true
           volumes:
           - name: plex-pvc
             persistentVolumeClaim:
