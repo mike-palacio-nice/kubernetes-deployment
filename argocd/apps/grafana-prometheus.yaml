@@ -9,7 +9,7 @@ spec:
     # --- Source 1: The Upstream Helm Chart ---
     - repoURL: 'https://prometheus-community.github.io/helm-charts'
       chart: kube-prometheus-stack
-      targetRevision: 69.x.x # Use the latest stable version
+      targetRevision: 81.2.0 # Use the latest stable version
       helm:
         # Link to the values file in the second source (Git)
         valueFiles:
