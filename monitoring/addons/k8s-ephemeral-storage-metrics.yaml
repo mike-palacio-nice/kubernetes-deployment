@@ -13,9 +13,14 @@ spec:
       values: |
         prometheus:
           release: grafana-prometheus
+          serviceMonitor:
+            enabled: true
+            additionalLabels:
+              release: grafana-prometheus
           monitor:
             enabled: true
             interval: 30s
+
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: monitoring
