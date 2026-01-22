@@ -6,6 +6,7 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
+          storageClassName: "local-path" # Change to match your 'kubectl get sc' output
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
@@ -20,6 +21,7 @@ grafana:
   
   persistence:
     enabled: true
+    storageClassName: "local-path"
     size: 2Gi
 
   # THE SIDECAR replaces 'dashboardProviders'

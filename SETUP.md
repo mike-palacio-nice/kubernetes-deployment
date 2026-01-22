@@ -180,3 +180,7 @@ kubectl apply -f argocd/apps/jackett.yaml
 ```sh
 kubectl apply -f argocd/apps/jackett.yaml
 ```
+## Setup a Local Storage class (rancher)
+```sh
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.30/deploy/local-path-storage.yaml
+```
