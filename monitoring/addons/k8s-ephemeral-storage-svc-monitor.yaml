@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: k8s-ephemeral-storage-metrics
+  labels:
+    app.kubernetes.io/name: k8s-ephemeral-storage-metrics
+spec:
+  namespaceSelector:
+    any: false
+    matchNames: [ "monitoring" ] # Change this to the namespace where you installed k8s-ephemeral-storage-metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: k8s-ephemeral-storage-metrics
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: k8s-ephemeral-storage-metrics
+  endpoints:
+    - interval: 30s
+      port: metrics
+      metricRelabelings:
+        - sourceLabels: [ __name__, exported_container ]
+          regex: ".*;(.+)"
+          targetLabel: container
+        - sourceLabels: [ __name__, exported_namespace ]
+          regex: ".*;(.+)"
+          targetLabel: namespace
+        - sourceLabels: [ __name__, exported_pod ]
+          regex: ".*;(.+)"
+          targetLabel: pod
