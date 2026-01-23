@@ -1,0 +1,62 @@
+## values.yml
+replicaCount: 1
+
+image:
+  repository: "linuxserver/sonarr"
+  tag: 4.0.16
+  pullPolicy: IfNotPresent
+
+env:
+  - name: PUID
+    value: "65534"
+  - name: PGID
+    value: "65534"
+  - name: TZ
+    value: "America/Chicago"
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8989
+  nodePort: 30089
+
+ingress:
+  enabled: false ## Disabled since we are using nodePort
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    external-dns.alpha.kubernetes.io/hostname: sonarr.palacpl.us
+    external-dns.alpha.kubernetes.io/ttl: "120" #optional
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+  pathType: Prefix
+  hosts:
+    - host: sonarr.palacpl.us
+      path: "/"
+  tls:
+    enabled: true
+    secretName: secure-tls
+
+volumes:
+  - name: plex-pvc
+    persistentVolumeClaim:
+      claimName: plex-pvc # PersistentVolumeClaim created earlier
+
+volumeMounts:
+  - name: plex-pvc
+    mountPath: "/config"
+    subPath: sonarr
+  - name: plex-pvc
+    mountPath: "/downloads"
+    subPath: media
+  - name: plex-pvc
+    mountPath: "/tv"
+    subPath: "library/tv"
+
+resources:
+  requests:
+    memory: 150Mi
+    cpu: 0.1
+  limits:
+    memory: 1Gi
+    cpu: 0.5
