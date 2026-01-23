@@ -51,6 +51,10 @@ spec:
               subPath: Radarr
               readOnly: true
             - name: plex-pvc
+              mountPath: /backup/sonarr
+              subPath: sonarr
+              readOnly: true
+            - name: plex-pvc
               mountPath: /backup/qbittorrent
               subPath: qBittorrent
               readOnly: true
