@@ -66,6 +66,10 @@ spec:
               mountPath: /backup/gluetun
               subPath: gluetun
               readOnly: true
+            - name: plex-pvc
+              mountPath: /backup/overseerr
+              subPath: overseerr
+              readOnly: true
           volumes:
           - name: plex-pvc
             persistentVolumeClaim:
