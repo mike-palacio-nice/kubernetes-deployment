@@ -1,0 +1,56 @@
+## values.yml
+replicaCount: 1
+
+image:
+  repository: "linuxserver/overseerr"
+  tag: 1.34.0
+  pullPolicy: IfNotPresent
+
+env:
+  - name: PUID
+    value: "65534"
+  - name: PGID
+    value: "65534"
+  - name: TZ
+    value: "America/Chicago"
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 5055
+  nodePort: 30088
+
+ingress:
+  enabled: false ## Disabled since we are using nodePort
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    external-dns.alpha.kubernetes.io/hostname: overseerr.palacpl.us
+    external-dns.alpha.kubernetes.io/ttl: "120" #optional
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+  pathType: Prefix
+  hosts:
+    - host: overseerr.palacpl.us
+      path: "/"
+  tls:
+    enabled: true
+    secretName: secure-tls
+
+volumes:
+  - name: plex-pvc
+    persistentVolumeClaim:
+      claimName: plex-pvc
+
+volumeMounts:
+  - name: plex-pvc
+    mountPath: "/config"
+    subPath: overseerr
+
+resources:
+  requests:
+    memory: 150Mi
+    cpu: 0.1
+  limits:
+    memory: 1Gi
+    cpu: 0.5

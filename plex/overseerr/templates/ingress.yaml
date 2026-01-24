@@ -1,0 +1,49 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "overseerr.fullname" . -}}
+{{- $pathType := .Values.ingress.pathType | default "Prefix" -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    app: {{ template "overseerr.name" . }}
+    chart: {{ template "overseerr.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  {{- if .Values.ingress.annotations }}
+  annotations:
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+  - hosts:
+  {{- range .Values.ingress.hosts }}
+    - {{ .host | quote }}
+  {{- end }}
+  {{- if .Values.ingress.tls.secretName }}
+    secretName: {{ .Values.ingress.tls.secretName }}
+  {{- else }}
+    secretName: {{ include "overseerr.fullname" . }}-cert
+  {{- end }}
+  {{- end }}
+  rules:
+  {{- range .Values.ingress.hosts }}
+  {{- $hostPath := .path | default "/" }}
+  - host: {{ .host | quote }}
+    http:
+      paths:
+      - path: {{ $hostPath }}
+        pathType: {{ $pathType }}
+        backend:
+          service:
+            name: {{ $fullName }}
+            port:
+              number: 80
+  {{- end }}
+{{ end }}
