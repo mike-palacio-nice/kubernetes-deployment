@@ -26,12 +26,9 @@ ingress:
     kubernetes.io/ingress.class: "cloudflare-tunnel"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    # external-dns.alpha.kubernetes.io/hostname: poosh.palacpl.us
-    # external-dns.alpha.kubernetes.io/ttl: "120"
-    # external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
   pathType: Prefix
   hosts:
-    - host: poosh.palacpl.us
+    - host: overseerr.palacpl.us
       path: "/"
   tls:
     enabled: true
