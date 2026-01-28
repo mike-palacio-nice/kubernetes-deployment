@@ -21,7 +21,7 @@ service:
   nodePort: 30088
 
 ingress:
-  enabled: false ## Disabled since we are using nodePort
+  enabled: true
   annotations:
     kubernetes.io/ingress.class: "cloudflare-tunnel"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
