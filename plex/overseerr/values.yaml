@@ -14,11 +14,11 @@ env:
   - name: TZ
     value: "America/Chicago"
 
-# service:
-  # type: NodePort
-  # port: 80
-  # targetPort: 5055
-  # nodePort: 30088
+service:
+  type: NodePort
+  port: 80
+  targetPort: 5055
+  nodePort: 30088
 
 ingress:
   enabled: false ## Disabled since we are using nodePort
