@@ -45,8 +45,8 @@ spec:
               value: "16793,6881"
             - name: UPDATER_PERIOD
               value: 20m
-            # - name: SERVER_REGIONS
-            #   value: "US Texas,US West,US East"
+            - name: SERVER_REGIONS
+              value: "US Texas,US West,US East"
             - name: SHADOWSOCKS
               value: "on"
           securityContext:
