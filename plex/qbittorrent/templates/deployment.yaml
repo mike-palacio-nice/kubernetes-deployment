@@ -27,9 +27,12 @@ spec:
             - |
               REGION=$(printf '{{- range .Values.serverRegions }}{{ . }}\n{{- end }}' | awk 'BEGIN{srand()} {a[NR]=$0} END{print a[int(rand()*NR)+1]}')
               echo "SERVER_REGIONS=$REGION" > /region/region.env
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
           volumeMounts:
             - name: region
-              mountPath: /data
+              mountPath: /region
       containers:
         - name: gluetun
           image: ghcr.io/qdm12/gluetun
