@@ -48,10 +48,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: "openvpn"
-            # SERVER_REGIONS will be provided at container start by
-            # reading the value produced by the initContainer into the
-            # environment. See initContainer 'pick-region' below.
-              value: "off"
+                  key: "password"
             - name: FIREWALL_INPUT_PORTS
               value: "8080"
             - name: FIREWALL_VPN_INPUT_PORTS
