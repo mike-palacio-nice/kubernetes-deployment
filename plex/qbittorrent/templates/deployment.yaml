@@ -38,12 +38,6 @@ spec:
         - name: gluetun
           image: ghcr.io/qdm12/gluetun
           imagePullPolicy: Always
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "SERVER_REGIONS is set to: $SERVER_REGIONS"
-              exec gluetun
           env:
             - name: TZ
               value: UTC
