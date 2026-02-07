@@ -2,12 +2,12 @@
 ## at random at pod start and write it to a shared volume so the main
 ## container can export it as SERVER_REGIONS at process start.
 serverRegions:
-	- US West
-	- US East
-	- US Texas
-	- US Florida
-	- US Denver
-	- US Chicago
-	- US Atlanta
-	- US Seattle
-	- US New York
+- US West
+- US East
+- US Texas
+- US Florida
+- US Denver
+- US Chicago
+- US Atlanta
+- US Seattle
+- US New York

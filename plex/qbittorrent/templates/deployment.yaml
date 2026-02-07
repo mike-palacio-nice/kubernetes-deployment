@@ -25,13 +25,8 @@ spec:
             - /bin/sh
             - -c
             - |
-              cat > /data/regions.txt <<'REGIONS'
-              {{- range $i, $r := .Values.serverRegions }}
-              {{ $r }}
-              {{- end }}
-              REGIONS
-              REGION=$(awk 'BEGIN{srand()} {a[NR]=$0} END{print a[int(rand()*NR)+1]}' /data/regions.txt)
-              echo "SERVER_REGIONS=$REGION" > /data/region.env
+              REGION=$(printf '{{- range .Values.serverRegions }}{{ . }}\n{{- end }}' | awk 'BEGIN{srand()} {a[NR]=$0} END{print a[int(rand()*NR)+1]}')
+              echo "SERVER_REGIONS=$REGION" > /region/region.env
           volumeMounts:
             - name: region
               mountPath: /data
