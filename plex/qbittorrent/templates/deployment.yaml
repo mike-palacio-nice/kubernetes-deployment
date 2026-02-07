@@ -26,7 +26,7 @@ spec:
             - -c
             - |
               REGION=$(printf '{{- range .Values.serverRegions }}{{ . }}\n{{- end }}' | awk 'BEGIN{srand()} {a[NR]=$0} END{print a[int(rand()*NR)+1]}')
-              echo "SERVER_REGIONS=$REGION" > /region/region.env
+              echo "SERVER_REGIONS='$REGION'" > /region/region.env
               cat /region/region.env
           securityContext:
             runAsNonRoot: false
@@ -38,6 +38,12 @@ spec:
         - name: gluetun
           image: ghcr.io/qdm12/gluetun
           imagePullPolicy: Always
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "SERVER_REGIONS is set to: $SERVER_REGIONS"
+              exec gluetun
           env:
             - name: TZ
               value: UTC
