@@ -18,6 +18,23 @@ spec:
       labels:
         app: qbittorrent-gluetun
     spec:
+      initContainers:
+        - name: pick-region
+          image: alpine:3.18
+          command:
+            - /bin/sh
+            - -c
+            - |
+              cat > /data/regions.txt <<'REGIONS'
+              {{- range $i, $r := .Values.serverRegions }}
+              {{ $r }}
+              {{- end }}
+              REGIONS
+              REGION=$(awk 'BEGIN{srand()} {a[NR]=$0} END{print a[int(rand()*NR)+1]}' /data/regions.txt)
+              echo "SERVER_REGIONS=$REGION" > /data/region.env
+          volumeMounts:
+            - name: region
+              mountPath: /data
       containers:
         - name: gluetun
           image: ghcr.io/qdm12/gluetun
@@ -36,17 +53,22 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: "openvpn"
-                  key: "password"
-            - name: FIREWALL_DEBUG
+            # SERVER_REGIONS will be provided at container start by
+            # reading the value produced by the initContainer into the
+            # environment. See initContainer 'pick-region' below.
               value: "off"
             - name: FIREWALL_INPUT_PORTS
               value: "8080"
             - name: FIREWALL_VPN_INPUT_PORTS
               value: "16793,6881"
             - name: UPDATER_PERIOD
-              value: 20m
+              value: 120m
             - name: SERVER_REGIONS
-              value: "US West,US East"
+              fileKeyRef:
+                path: region.env
+                volumeName: region
+                key: SERVER_REGIONS
+                optional: false
             - name: SHADOWSOCKS
               value: "on"
           securityContext:
@@ -136,3 +158,7 @@ spec:
         - name: plex-media
           persistentVolumeClaim:
             claimName: plex-pvc
+        - name: region
+          emptyDir: {}
+
+
