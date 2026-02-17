@@ -18,6 +18,7 @@ spec:
       labels:
         app: qbittorrent-gluetun
     spec:
+    # TODO: mount a configmap to the region.env file and then pass it into the main container as an env var instead of using an init container to write it to a shared volume
       initContainers:
         - name: pick-region
           image: alpine:3.18
@@ -156,5 +157,3 @@ spec:
             claimName: plex-pvc
         - name: region
           emptyDir: {}
-
-
