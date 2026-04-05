@@ -59,7 +59,7 @@ spec:
             - name: FIREWALL_VPN_INPUT_PORTS
               value: "16793,6881"
             - name: UPDATER_PERIOD
-              value: 120m
+              value: 10m
             - name: SERVER_REGIONS
               value: "US Chicago"
               # fileKeyRef:
