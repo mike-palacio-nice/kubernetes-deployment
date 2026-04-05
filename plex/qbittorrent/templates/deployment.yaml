@@ -61,7 +61,7 @@ spec:
             - name: UPDATER_PERIOD
               value: 120m
             - name: SERVER_REGIONS
-              value: "US West"
+              value: "US Chicago"
               # fileKeyRef:
               #   path: region.env
               #   volumeName: region
