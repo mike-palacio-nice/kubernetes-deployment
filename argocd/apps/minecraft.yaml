@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   source:
     path: helm/minecraft
-    repoURL: https://github.com/mike-palacio-nice/minecraft-server.git
+    repoURL: https://github.com/palacplus/minecraft-server.git
     targetRevision: HEAD
     helm:
       valueFiles:
