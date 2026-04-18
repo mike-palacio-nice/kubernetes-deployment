@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minecraft
+  namespace: argocd
+spec:
+  destination:
+    namespace: minecraft
+    server: https://kubernetes.default.svc
+  source:
+    path: helm/minecraft
+    repoURL: https://github.com/palacplus/minecraft-server.git
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values.yaml
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
