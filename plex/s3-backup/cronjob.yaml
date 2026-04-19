@@ -70,6 +70,10 @@ spec:
               mountPath: /backup/overseerr
               subPath: overseerr
               readOnly: true
+            - name: plex-pvc
+              mountPath: /backup/minecraft
+              subPath: minecraft
+              readOnly: true
           volumes:
           - name: plex-pvc
             persistentVolumeClaim:
