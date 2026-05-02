@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: oci://ghcr.io/seerr-team/seerr/seerr-chart
-      path: .
+    - repoURL: ghcr.io/seerr-team/seerr
+      chart: seerr-chart
       targetRevision: "3.4.2"
       helm:
         valueFiles:
