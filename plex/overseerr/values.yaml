@@ -2,8 +2,8 @@
 replicaCount: 1
 
 image:
-  repository: "linuxserver/overseerr"
-  tag: 1.35.0
+  repository: "ghcr.io/seerr-team/seerr"
+  tag: v3.2.0
   pullPolicy: IfNotPresent
 
 env:
@@ -41,8 +41,8 @@ volumes:
 
 volumeMounts:
   - name: plex-pvc
-    mountPath: "/config"
-    subPath: overseerr
+    mountPath: "/app/config"
+    subPath: seerr
 
 resources:
   requests:
