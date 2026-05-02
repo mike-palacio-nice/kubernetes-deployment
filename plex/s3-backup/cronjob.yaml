@@ -67,8 +67,8 @@ spec:
               subPath: gluetun
               readOnly: true
             - name: plex-pvc
-              mountPath: /backup/overseerr
-              subPath: overseerr
+              mountPath: /backup/seerr
+              subPath: seerr
               readOnly: true
             - name: plex-pvc
               mountPath: /backup/minecraft
