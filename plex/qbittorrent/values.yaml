@@ -122,7 +122,7 @@ service:
     metallb.universe.tf/allow-shared-ip: gluetun
 
 ingress:
-  enabled: true
+  enabled: false
   ## Kubernetes Ingress metadata.name (was qbittorrent before templating)
   resourceName: qbittorrent
   className: nginx
