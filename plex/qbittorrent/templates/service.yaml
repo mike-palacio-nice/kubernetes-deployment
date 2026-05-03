@@ -2,17 +2,26 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: qbittorrent-gluetun
-  namespace: plex
+  name: {{ include "qbittorrent-gluetun.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  {{- with .Values.service.annotations }}
   annotations:
-    metallb.universe.tf/allow-shared-ip: gluetun
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    app: {{ include "qbittorrent-gluetun.name" . }}
+    chart: {{ include "qbittorrent-gluetun.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
+  type: {{ .Values.service.type }}
   selector:
-    app: qbittorrent-gluetun
+    app: {{ include "qbittorrent-gluetun.name" . }}
   ports:
-    - port: 80
-      targetPort: 8080
-      protocol: TCP
-      name: http
-      nodePort: 30002
-  type: NodePort
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: {{ .Values.service.protocol }}
+      name: {{ .Values.service.name }}
+      {{- if and (eq .Values.service.type "NodePort") .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}

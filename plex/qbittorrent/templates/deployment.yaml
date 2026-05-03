@@ -2,21 +2,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qbittorrent-gluetun
-  namespace: plex
+  name: {{ include "qbittorrent-gluetun.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: qbittorrent-gluetun
+    app: {{ include "qbittorrent-gluetun.name" . }}
+    chart: {{ include "qbittorrent-gluetun.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
-    type: Recreate
+    type: {{ .Values.deployment.strategy.type }}
   selector:
     matchLabels:
-      app: qbittorrent-gluetun
+      app: {{ include "qbittorrent-gluetun.name" . }}
   template:
     metadata:
       labels:
-        app: qbittorrent-gluetun
+        app: {{ include "qbittorrent-gluetun.name" . }}
+        release: {{ .Release.Name }}
     spec:
     # TODO: mount a configmap to the region.env file and then pass it into the main container as an env var instead of using an init container to write it to a shared volume
       # initContainers:
@@ -37,124 +41,105 @@ spec:
       #         mountPath: /region
       containers:
         - name: gluetun
-          image: ghcr.io/qdm12/gluetun:v3
-          imagePullPolicy: Always
+          image: "{{ .Values.gluetun.image.repository }}:{{ .Values.gluetun.image.tag }}"
+          imagePullPolicy: {{ .Values.gluetun.image.pullPolicy }}
           env:
-            - name: TZ
-              value: UTC
-            - name: VPN_SERVICE_PROVIDER
-              value: "private internet access"
+          {{- range $k, $v := .Values.gluetun.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+          {{- end }}
             - name: OPENVPN_USER
               valueFrom:
                 secretKeyRef:
-                  name: "openvpn"
-                  key: "username"
+                  name: {{ .Values.openvpn.secretName | quote }}
+                  key: {{ .Values.openvpn.usernameKey | quote }}
             - name: OPENVPN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: "openvpn"
-                  key: "password"
-            - name: FIREWALL_INPUT_PORTS
-              value: "8080"
-            - name: FIREWALL_VPN_INPUT_PORTS
-              value: "16793,6881"
-            - name: UPDATER_PERIOD
-              value: 60m
-            # - name: SERVER_REGIONS
-            #   value: "US Chicago"
-              # fileKeyRef:
-              #   path: region.env
-              #   volumeName: region
-              #   key: SERVER_REGIONS
-              #   optional: false
-            - name: SHADOWSOCKS
-              value: "on"
+                  name: {{ .Values.openvpn.secretName | quote }}
+                  key: {{ .Values.openvpn.passwordKey | quote }}
+            {{- if .Values.gluetun.serverRegions }}
+            - name: SERVER_REGIONS
+              value: {{ .Values.gluetun.serverRegions | quote }}
+            {{- else if .Values.serverRegions }}
+            - name: SERVER_REGIONS
+              value: {{ join "," .Values.serverRegions | quote }}
+            {{- end }}
           securityContext:
-            allowPrivilegeEscalation: true
-            privileged: true
-            readOnlyRootFilesystem: false
-            runAsNonRoot: false
+            {{- toYaml .Values.gluetun.securityContext | nindent 12 }}
           volumeMounts:
             - name: plex-media
-              mountPath: /gluetun
-              subPath: gluetun
+              mountPath: {{ .Values.persistence.gluetun.mountPath }}
+              subPath: {{ .Values.persistence.gluetun.subPath }}
           resources:
-            requests:
-              memory: 200Mi
-              cpu: "0.1"
-            limits:
-              memory: 500Mi
-              cpu: "0.5"
+            {{- toYaml .Values.gluetun.resources | nindent 12 }}
         - name: qbittorrent
-          image: lscr.io/linuxserver/qbittorrent:latest
-          imagePullPolicy: IfNotPresent
+          image: "{{ .Values.qbittorrent.image.repository }}:{{ .Values.qbittorrent.image.tag }}"
+          imagePullPolicy: {{ .Values.qbittorrent.image.pullPolicy }}
           env:
-            - name: PUID
-              value: "65534"
-            - name: PGID
-              value: "65534"
-            - name: TZ
-              value: "Etc/UTC"
+          {{- range $k, $v := .Values.qbittorrent.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+          {{- end }}
             - name: WEBUI_PORT
-              value: "8080"
+              value: {{ .Values.qbittorrent.webuiPort | quote }}
           ports:
-            - containerPort: 8080
+            - containerPort: {{ .Values.qbittorrent.webuiPort }}
           resources:
-            requests:
-              memory: 200Mi
-              cpu: "0.1"
-            limits:
-              memory: 500Mi
-              cpu: "0.5"
+            {{- toYaml .Values.qbittorrent.resources | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            privileged: false
-            readOnlyRootFilesystem: false
-            runAsGroup: 0
-            runAsNonRoot: false
-            runAsUser: 0
+            {{- toYaml .Values.qbittorrent.securityContext | nindent 12 }}
           startupProbe:
-            initialDelaySeconds: 30
-            failureThreshold: 10
-            periodSeconds: 10
+            {{- toYaml .Values.qbittorrent.startupProbe | nindent 12 }}
             tcpSocket:
-              port: 8080
+              port: {{ .Values.qbittorrent.webuiPort }}
           livenessProbe:
             exec:
               command:
-              - /bin/sh
-              - -c
-              - |
-                endpoint="http://localhost:8080/api/v2/torrents/info?filter=stalled_downloading"
-                response=$(curl -s -o /dev/null -w "%{http_code}" "$endpoint")
-                body=$(curl -s "$endpoint")
-                if [ "$response" -eq 200 ] && [ "$(echo "$body" | jq -e '. | length == 0')" = "true" ]; then
-                  exit 0
-                else
-                  exit 1
-                fi
-            initialDelaySeconds: 60
-            failureThreshold: 10
-            periodSeconds: 30
-            timeoutSeconds: 60
+                - /bin/sh
+                - -c
+                - |
+                  endpoint="http://localhost:{{ .Values.qbittorrent.webuiPort }}/api/v2/torrents/info?filter=stalled_downloading"
+                  response=$(curl -s -o /dev/null -w "%{http_code}" "$endpoint")
+                  body=$(curl -s "$endpoint")
+                  if [ "$response" -eq 200 ] && [ "$(echo "$body" | jq -e '. | length == 0')" = "true" ]; then
+                    exit 0
+                  else
+                    exit 1
+                  fi
+            initialDelaySeconds: {{ .Values.qbittorrent.livenessProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.qbittorrent.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.qbittorrent.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.qbittorrent.livenessProbe.timeoutSeconds }}
           volumeMounts:
-            - mountPath: /config
+            - mountPath: {{ .Values.persistence.qbittorrent.config.mountPath }}
               name: plex-media
-              subpath: config
-            - mountPath: /downloads
+              subPath: {{ .Values.persistence.qbittorrent.config.subPath }}
+            - mountPath: {{ .Values.persistence.qbittorrent.downloads.mountPath }}
               name: plex-media
-              subPath: media
-      dnsPolicy: ClusterFirst
-      hostNetwork: false
-      restartPolicy: Always
+              subPath: {{ .Values.persistence.qbittorrent.downloads.subPath }}
+      dnsPolicy: {{ .Values.deployment.dnsPolicy }}
+      hostNetwork: {{ .Values.deployment.hostNetwork }}
+      restartPolicy: {{ .Values.deployment.restartPolicy }}
       securityContext:
-        fsGroupChangePolicy: Always
-        runAsNonRoot: true
+        {{- toYaml .Values.deployment.podSecurityContext | nindent 8 }}
       setHostnameAsFQDN: false
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
       volumes:
         - name: plex-media
           persistentVolumeClaim:
-            claimName: plex-pvc
+            claimName: {{ .Values.persistence.claimName }}
         # - name: region
         #   emptyDir: {}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

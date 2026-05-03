@@ -1,13 +1,144 @@
-## Static list of possible server regions. An initContainer will pick one
-## at random at pod start and write it to a shared volume so the main
-## container can export it as SERVER_REGIONS at process start.
+## Helm release naming — set to keep existing resource names (e.g. qbittorrent-gluetun)
+fullnameOverride: qbittorrent-gluetun
+# nameOverride: ""
+
+namespace: plex
+
+replicaCount: 1
+
+## Preferred VPN regions for Gluetun (comma-joined into SERVER_REGIONS). Must match provider names
+## (e.g. PIA). Omit all regions by setting serverRegions: [] and leaving gluetun.serverRegions unset.
 serverRegions:
-- US West
-- US East
-- US Texas
-- US Florida
-- US Denver
-- US Chicago
-- US Atlanta
-- US Seattle
-- US New York
+  - US Chicago
+  - US West
+  - US East
+  - US Texas
+  - US Florida
+  - US Denver
+  - US Atlanta
+  - US Seattle
+  - US New York
+
+openvpn:
+  secretName: openvpn
+  usernameKey: username
+  passwordKey: password
+
+gluetun:
+  ## Optional: set SERVER_REGIONS verbatim (comma-separated). If empty, serverRegions list is joined.
+  # serverRegions: "US Chicago, US West"
+  serverRegions: ""
+  image:
+    repository: ghcr.io/qdm12/gluetun
+    tag: v3
+    pullPolicy: IfNotPresent
+  env:
+    TZ: UTC
+    VPN_SERVICE_PROVIDER: private internet access
+    FIREWALL_INPUT_PORTS: "8080"
+    FIREWALL_VPN_INPUT_PORTS: "16793,6881"
+    UPDATER_PERIOD: 60m
+    SHADOWSOCKS: "on"
+  securityContext:
+    allowPrivilegeEscalation: true
+    privileged: true
+    readOnlyRootFilesystem: false
+    runAsNonRoot: false
+  resources:
+    requests:
+      memory: 200Mi
+      cpu: "0.1"
+    limits:
+      memory: 500Mi
+      cpu: "0.5"
+
+qbittorrent:
+  image:
+    repository: lscr.io/linuxserver/qbittorrent
+    tag: latest
+    pullPolicy: IfNotPresent
+  env:
+    PUID: "65534"
+    PGID: "65534"
+    TZ: Etc/UTC
+  ## WEBUI_PORT must match gluetun.env.FIREWALL_INPUT_PORTS and service targetPort wiring
+  webuiPort: 8080
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+    readOnlyRootFilesystem: false
+    runAsGroup: 0
+    runAsNonRoot: false
+    runAsUser: 0
+  startupProbe:
+    initialDelaySeconds: 30
+    failureThreshold: 10
+    periodSeconds: 10
+  livenessProbe:
+    initialDelaySeconds: 60
+    failureThreshold: 30
+    periodSeconds: 60
+    timeoutSeconds: 60
+  resources:
+    requests:
+      memory: 200Mi
+      cpu: "0.5"
+    limits:
+      memory: 500Mi
+      cpu: "1.0"
+
+persistence:
+  claimName: plex-pvc
+  gluetun:
+    mountPath: /gluetun
+    subPath: gluetun
+  qbittorrent:
+    config:
+      mountPath: /config
+      subPath: config
+    downloads:
+      mountPath: /downloads
+      subPath: media
+
+deployment:
+  strategy:
+    type: Recreate
+  dnsPolicy: ClusterFirst
+  hostNetwork: false
+  restartPolicy: Always
+  podSecurityContext:
+    fsGroupChangePolicy: Always
+    runAsNonRoot: true
+  terminationGracePeriodSeconds: 30
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8080
+  nodePort: 30002
+  protocol: TCP
+  name: http
+  annotations:
+    metallb.universe.tf/allow-shared-ip: gluetun
+
+ingress:
+  enabled: false
+  ## Kubernetes Ingress metadata.name (was qbittorrent before templating)
+  resourceName: qbittorrent
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    external-dns.alpha.kubernetes.io/hostname: qbittorrent.palacpl.us
+    external-dns.alpha.kubernetes.io/ttl: "120"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+  path: /
+  pathType: Prefix
+  hosts:
+    - qbittorrent.palacpl.us
+  tls:
+    enabled: true
+    secretName: secure-tls
+
+nodeSelector: {}
+affinity: {}
+tolerations: []
