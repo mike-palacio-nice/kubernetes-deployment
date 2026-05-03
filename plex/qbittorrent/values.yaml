@@ -95,7 +95,7 @@ persistence:
   qbittorrent:
     config:
       mountPath: /config
-      subPath: qBittorrent
+      subPath: qbittorrent
     downloads:
       mountPath: /downloads
       subPath: media
