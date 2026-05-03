@@ -56,7 +56,7 @@ spec:
               readOnly: true
             - name: plex-pvc
               mountPath: /backup/qbittorrent
-              subPath: qBittorrent
+              subPath: qbittorrent
               readOnly: true
             - name: plex-pvc
               mountPath: /backup/jackett
