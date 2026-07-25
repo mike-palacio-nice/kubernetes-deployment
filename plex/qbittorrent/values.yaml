@@ -37,7 +37,7 @@ gluetun:
     VPN_SERVICE_PROVIDER: private internet access
     FIREWALL_INPUT_PORTS: "8080"
     FIREWALL_VPN_INPUT_PORTS: "16793,6881"
-    UPDATER_PERIOD: 60m
+    UPDATER_PERIOD: 240h
     SHADOWSOCKS: "on"
   securityContext:
     allowPrivilegeEscalation: true
