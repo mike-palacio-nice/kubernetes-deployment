@@ -26,6 +26,15 @@ spec:
       {{- if .Values.postgres.enabled }}
       securityContext:
         {{- include "radarr.postgres.podSecurityContext" . | nindent 8 }}
+      initContainers:
+      - name: fix-permissions
+        image: busybox:latest
+        command: ["sh", "-c", "chown -R {{ .Values.postgres.puid }}:{{ .Values.postgres.pgid }} /var/run/postgresql && chmod 775 /var/run/postgresql"]
+        securityContext:
+          runAsUser: 0 # Run as root just to fix the directory permissions
+        volumeMounts:
+        - name: postgres-run-dir
+          mountPath: /var/run/postgresql
       {{- end }}
       volumes:
 {{ toYaml .Values.volumes | indent 6 }}
@@ -34,6 +43,8 @@ spec:
         configMap:
           name: {{ include "radarr.fullname" . }}-postgres-init
           defaultMode: 0755
+      - name: postgres-run
+        emptyDir: {}
 {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -88,6 +99,9 @@ spec:
               subPath: {{ .Values.postgres.persistence.subPath }}
             - name: postgres-init
               mountPath: /docker-entrypoint-initdb.d
+            # Added mount so Postgres can access the corrected folder
+            - name: postgres-run
+              mountPath: /var/run/postgresql
           readinessProbe:
             exec:
               command:
