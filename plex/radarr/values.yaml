@@ -86,7 +86,7 @@ postgres:
       cpu: 0.5
 
 migration:
-  enabled: true
+  enabled: false
   ## Scale the Radarr deployment to 0 before enabling to avoid plex-pvc conflicts.
   ## 1. Deploy with postgres enabled and let Radarr start once (creates PG schema)
   ## 2. Scale deployment to 0 replicas
