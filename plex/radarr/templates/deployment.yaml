@@ -47,6 +47,7 @@ spec:
         emptyDir: {}
 {{- end }}
       containers:
+      {{- if not .Values.migration.enabled }}
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -74,6 +75,7 @@ spec:
 {{ toYaml .Values.volumeMounts | indent 12 }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+      {{- end }}
       {{- if .Values.postgres.enabled }}
         - name: postgres
           image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
