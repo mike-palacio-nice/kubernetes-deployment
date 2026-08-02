@@ -33,7 +33,7 @@ spec:
         securityContext:
           runAsUser: 0 # Run as root just to fix the directory permissions
         volumeMounts:
-        - name: postgres-run-dir
+        - name: postgres-run
           mountPath: /var/run/postgresql
       {{- end }}
       volumes:
