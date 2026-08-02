@@ -30,3 +30,20 @@ Create chart name and version as used by the chart label.
 {{- define "radarr.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Postgres container security context (matches Radarr PUID/PGID on shared plex-pvc).
+*/}}
+{{- define "radarr.postgres.securityContext" -}}
+runAsUser: {{ .Values.postgres.puid }}
+runAsGroup: {{ .Values.postgres.pgid }}
+runAsNonRoot: true
+{{- end -}}
+
+{{/*
+Pod security context when postgres shares plex-pvc with Radarr.
+*/}}
+{{- define "radarr.postgres.podSecurityContext" -}}
+fsGroup: {{ .Values.postgres.pgid }}
+fsGroupChangePolicy: OnRootMismatch
+{{- end -}}

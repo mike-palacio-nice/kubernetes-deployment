@@ -59,6 +59,8 @@ resources:
 
 postgres:
   enabled: true
+  puid: 65534
+  pgid: 65534
   image:
     repository: postgres
     tag: "17"

@@ -23,6 +23,8 @@ spec:
         job: postgres-migrate
     spec:
       restartPolicy: Never
+      securityContext:
+        {{- include "radarr.postgres.podSecurityContext" . | nindent 8 }}
       volumes:
         - name: {{ .Values.postgres.persistence.claimName }}
           persistentVolumeClaim:
@@ -52,6 +54,8 @@ spec:
         - name: postgres
           image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
           imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          securityContext:
+            {{- include "radarr.postgres.securityContext" . | nindent 12 }}
           env:
             - name: POSTGRES_USER
               value: {{ .Values.postgres.auth.username | quote }}
@@ -76,6 +80,8 @@ spec:
         - name: migrate
           image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
           imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          securityContext:
+            {{- include "radarr.postgres.securityContext" . | nindent 12 }}
           command:
             - /bin/bash
             - /scripts/migrate.sh

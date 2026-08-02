@@ -23,6 +23,10 @@ spec:
         app: {{ template "radarr.name" . }}
         release: {{ .Release.Name }}
     spec:
+      {{- if .Values.postgres.enabled }}
+      securityContext:
+        {{- include "radarr.postgres.podSecurityContext" . | nindent 8 }}
+      {{- end }}
       volumes:
 {{ toYaml .Values.volumes | indent 6 }}
 {{- if .Values.postgres.enabled }}
@@ -63,6 +67,8 @@ spec:
         - name: postgres
           image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
           imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          securityContext:
+            {{- include "radarr.postgres.securityContext" . | nindent 12 }}
           env:
             - name: POSTGRES_USER
               value: {{ .Values.postgres.auth.username | quote }}
