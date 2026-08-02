@@ -1,0 +1,117 @@
+{{- if and .Values.postgres.enabled .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "radarr.fullname" . }}-postgres-migrate-{{ .Release.Revision }}
+  labels:
+    app: {{ include "radarr.name" . }}
+    chart: {{ include "radarr.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  backoffLimit: {{ .Values.migration.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.migration.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "radarr.name" . }}
+        release: {{ .Release.Name }}
+        job: postgres-migrate
+    spec:
+      restartPolicy: Never
+      volumes:
+        - name: {{ .Values.postgres.persistence.claimName }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgres.persistence.claimName }}
+        - name: postgres-init
+          configMap:
+            name: {{ include "radarr.fullname" . }}-postgres-init
+            defaultMode: 0755
+        - name: migration-scripts
+          configMap:
+            name: {{ include "radarr.fullname" . }}-postgres-migration
+            defaultMode: 0755
+        - name: pgloader-bin
+          emptyDir: {}
+      initContainers:
+        - name: copy-pgloader
+          image: "{{ .Values.migration.pgloader.image.repository }}:{{ .Values.migration.pgloader.image.tag }}"
+          imagePullPolicy: {{ .Values.migration.pgloader.image.pullPolicy }}
+          command:
+            - cp
+            - /usr/local/bin/pgloader
+            - /pgloader/pgloader
+          volumeMounts:
+            - name: pgloader-bin
+              mountPath: /pgloader
+      containers:
+        - name: postgres
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.auth.username | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.auth.password | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.auth.database | quote }}
+            - name: PGDATA
+              value: {{ .Values.postgres.dataDir | quote }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Values.postgres.persistence.claimName }}
+              mountPath: {{ .Values.postgres.persistence.mountPath }}
+              subPath: {{ .Values.postgres.persistence.subPath }}
+            - name: postgres-init
+              mountPath: /docker-entrypoint-initdb.d
+          resources:
+            {{- toYaml .Values.postgres.resources | nindent 12 }}
+        - name: migrate
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - /scripts/migrate.sh
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.auth.username | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.auth.password | quote }}
+            - name: POSTGRES_MAIN_DB
+              value: {{ .Values.postgres.databases.main | quote }}
+            - name: SQLITE_DB_PATH
+              value: {{ .Values.migration.sqliteDbPath | quote }}
+            - name: MARKER_FILE_PATH
+              value: {{ .Values.migration.markerFilePath | quote }}
+            - name: BACKUP_SQLITE
+              value: {{ .Values.migration.backupSqlite | quote }}
+          volumeMounts:
+            - name: {{ .Values.postgres.persistence.claimName }}
+              mountPath: /config
+              subPath: {{ .Values.migration.configSubPath }}
+            - name: migration-scripts
+              mountPath: /scripts
+            - name: pgloader-bin
+              mountPath: /pgloader
+          resources:
+            {{- toYaml .Values.migration.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

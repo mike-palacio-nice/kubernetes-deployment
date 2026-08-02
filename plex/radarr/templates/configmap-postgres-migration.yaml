@@ -1,0 +1,118 @@
+{{- if and .Values.postgres.enabled .Values.migration.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "radarr.fullname" . }}-postgres-migration
+  labels:
+    app: {{ include "radarr.name" . }}
+    chart: {{ include "radarr.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  fix-sequences.sql: |
+    select setval('public."AlternativeTitles_Id_seq"', (SELECT MAX("Id")+1 FROM "AlternativeTitles"));
+    select setval('public."Blacklist_Id_seq"', (SELECT MAX("Id")+1 FROM "Blocklist"));
+    select setval('public."Collections_Id_seq"', (SELECT MAX("Id")+1 FROM "Collections"));
+    select setval('public."Commands_Id_seq"', (SELECT MAX("Id")+1 FROM "Commands"));
+    select setval('public."Config_Id_seq"', (SELECT MAX("Id")+1 FROM "Config"));
+    select setval('public."Credits_Id_seq"', (SELECT MAX("Id")+1 FROM "Credits"));
+    select setval('public."CustomFilters_Id_seq"', (SELECT MAX("Id")+1 FROM "CustomFilters"));
+    select setval('public."CustomFormats_Id_seq"', (SELECT MAX("Id")+1 FROM "CustomFormats"));
+    select setval('public."DelayProfiles_Id_seq"', (SELECT MAX("Id")+1 FROM "DelayProfiles"));
+    select setval('public."DownloadClientStatus_Id_seq"', (SELECT MAX("Id")+1 FROM "DownloadClientStatus"));
+    select setval('public."DownloadClients_Id_seq"', (SELECT MAX("Id")+1 FROM "DownloadClients"));
+    select setval('public."DownloadHistory_Id_seq"', (SELECT MAX("Id")+1 FROM "DownloadHistory"));
+    select setval('public."ExtraFiles_Id_seq"', (SELECT MAX("Id")+1 FROM "ExtraFiles"));
+    select setval('public."History_Id_seq"', (SELECT MAX("Id")+1 FROM "History"));
+    select setval('public."ImportExclusions_Id_seq"', (SELECT MAX("Id")+1 FROM "ImportExclusions"));
+    select setval('public."ImportListMovies_Id_seq"', (SELECT MAX("Id")+1 FROM "ImportListMovies"));
+    select setval('public."IndexerStatus_Id_seq"', (SELECT MAX("Id")+1 FROM "IndexerStatus"));
+    select setval('public."Indexers_Id_seq"', (SELECT MAX("Id")+1 FROM "Indexers"));
+    select setval('public."MetadataFiles_Id_seq"', (SELECT MAX("Id")+1 FROM "MetadataFiles"));
+    select setval('public."Metadata_Id_seq"', (SELECT MAX("Id")+1 FROM "Metadata"));
+    select setval('public."MovieFiles_Id_seq"', (SELECT MAX("Id")+1 FROM "MovieFiles"));
+    select setval('public."MovieMetadata_Id_seq"', (SELECT MAX("Id")+1 FROM "MovieMetadata"));
+    select setval('public."MovieTranslations_Id_seq"', (SELECT MAX("Id")+1 FROM "MovieTranslations"));
+    select setval('public."Movies_Id_seq"', (SELECT MAX("Id")+1 FROM "Movies"));
+    select setval('public."NamingConfig_Id_seq"', (SELECT MAX("Id")+1 FROM "NamingConfig"));
+    select setval('public."Notifications_Id_seq"', (SELECT MAX("Id")+1 FROM "Notifications"));
+    select setval('public."PendingReleases_Id_seq"', (SELECT MAX("Id")+1 FROM "PendingReleases"));
+    select setval('public."Profiles_Id_seq"', (SELECT MAX("Id")+1 FROM "QualityProfiles"));
+    select setval('public."QualityDefinitions_Id_seq"', (SELECT MAX("Id")+1 FROM "QualityDefinitions"));
+    select setval('public."Restrictions_Id_seq"', (SELECT MAX("Id")+1 FROM "ReleaseProfiles"));
+    select setval('public."RootFolders_Id_seq"', (SELECT MAX("Id")+1 FROM "RootFolders"));
+    select setval('public."ScheduledTasks_Id_seq"', (SELECT MAX("Id")+1 FROM "ScheduledTasks"));
+    select setval('public."SubtitleFiles_Id_seq"', (SELECT MAX("Id")+1 FROM "SubtitleFiles"));
+    select setval('public."Tags_Id_seq"', (SELECT MAX("Id")+1 FROM "Tags"));
+    select setval('public."Users_Id_seq"', (SELECT MAX("Id")+1 FROM "Users"));
+  migrate.sh: |
+    #!/bin/bash
+    set -euo pipefail
+
+    PGHOST="127.0.0.1"
+    PGPORT="5432"
+    PGUSER="${POSTGRES_USER}"
+    PGPASSWORD="${POSTGRES_PASSWORD}"
+    MAIN_DB="${POSTGRES_MAIN_DB}"
+    SQLITE_DB="${SQLITE_DB_PATH}"
+    MARKER="${MARKER_FILE_PATH}"
+    PGLOADER="/pgloader/pgloader"
+
+    export PGPASSWORD
+
+    echo "Waiting for PostgreSQL..."
+    until pg_isready -h "${PGHOST}" -U "${PGUSER}"; do
+      sleep 2
+    done
+
+    echo "Waiting for ${MAIN_DB} database..."
+    until psql -h "${PGHOST}" -U "${PGUSER}" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '${MAIN_DB}'" | grep -q 1; do
+      sleep 2
+    done
+
+    if [[ -f "${MARKER}" ]]; then
+      echo "Migration already completed (${MARKER} exists)."
+      exit 0
+    fi
+
+    if [[ ! -f "${SQLITE_DB}" ]]; then
+      echo "No SQLite database at ${SQLITE_DB}. Nothing to migrate."
+      exit 0
+    fi
+
+    TABLE_COUNT="$(psql -h "${PGHOST}" -U "${PGUSER}" -d "${MAIN_DB}" -tAc "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'")"
+    if [[ "${TABLE_COUNT}" -eq "0" ]]; then
+      echo "ERROR: PostgreSQL schema not initialized."
+      echo "Start Radarr with postgres enabled at least once before running migration."
+      exit 1
+    fi
+
+    echo "Removing default PostgreSQL seed rows..."
+    psql -h "${PGHOST}" -U "${PGUSER}" -d "${MAIN_DB}" -v ON_ERROR_STOP=1 <<-EOSQL
+    DELETE FROM "QualityProfiles";
+    DELETE FROM "QualityDefinitions";
+    DELETE FROM "DelayProfiles";
+    DELETE FROM "Metadata";
+    EOSQL
+
+    echo "Copying SQLite database..."
+    cp "${SQLITE_DB}" /tmp/radarr.db
+
+    echo "Running pgloader..."
+    PGLOADER_ARGS=(--with "quote identifiers" --with "data only")
+    {{- range .Values.migration.pgloader.extraArgs }}
+    PGLOADER_ARGS+=({{ . | quote }})
+    {{- end }}
+    "${PGLOADER}" "${PGLOADER_ARGS[@]}" /tmp/radarr.db "postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${MAIN_DB}"
+
+    echo "Fixing sequences..."
+    psql -h "${PGHOST}" -U "${PGUSER}" -d "${MAIN_DB}" -v ON_ERROR_STOP=1 -f /scripts/fix-sequences.sql
+
+    if [[ "${BACKUP_SQLITE}" == "true" && ! -f "${SQLITE_DB}.bak" ]]; then
+      echo "Backing up SQLite database..."
+      cp "${SQLITE_DB}" "${SQLITE_DB}.bak"
+    fi
+
+    touch "${MARKER}"
+    echo "Migration complete."
+{{- end }}

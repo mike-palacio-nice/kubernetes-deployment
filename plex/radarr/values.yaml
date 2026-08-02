@@ -82,3 +82,34 @@ postgres:
     limits:
       memory: 512Mi
       cpu: 0.5
+
+migration:
+  enabled: false
+  ## Scale the Radarr deployment to 0 before enabling to avoid plex-pvc conflicts.
+  ## 1. Deploy with postgres enabled and let Radarr start once (creates PG schema)
+  ## 2. Scale deployment to 0 replicas
+  ## 3. Set migration.enabled: true and helm upgrade
+  ## 4. Set migration.enabled: false and scale deployment back to 1
+  configSubPath: Radarr
+  sqliteDbPath: /config/radarr.db
+  markerFilePath: /config/.postgres-migrated
+  backupSqlite: true
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 86400
+  pgloader:
+    image:
+      repository: ghcr.io/roxedus/pgloader
+      tag: latest
+      pullPolicy: IfNotPresent
+    extraArgs: []
+    ## For large databases, uncomment:
+    # extraArgs:
+    #   - '--with "prefetch rows = 100"'
+    #   - '--with "batch size = 1MB"'
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 0.2
+    limits:
+      memory: 1Gi
+      cpu: 1.0
