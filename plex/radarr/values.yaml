@@ -56,3 +56,29 @@ resources:
   limits:
     memory: 1Gi
     cpu: 0.5
+
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "17"
+    pullPolicy: IfNotPresent
+  auth:
+    username: radarr
+    password: radarr
+    database: postgres
+  databases:
+    main: radarr-main
+    log: radarr-log
+  dataDir: /var/lib/postgresql/data/pgdata
+  persistence:
+    claimName: plex-pvc
+    subPath: Radarr/postgres
+    mountPath: /var/lib/postgresql/data
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 0.1
+    limits:
+      memory: 512Mi
+      cpu: 0.5

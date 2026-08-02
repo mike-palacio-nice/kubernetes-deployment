@@ -9,6 +9,10 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  {{- if .Values.postgres.enabled }}
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       app: {{ template "radarr.name" . }}
@@ -21,12 +25,32 @@ spec:
     spec:
       volumes:
 {{ toYaml .Values.volumes | indent 6 }}
+{{- if .Values.postgres.enabled }}
+      - name: postgres-init
+        configMap:
+          name: {{ include "radarr.fullname" . }}-postgres-init
+          defaultMode: 0755
+{{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
 {{ toYaml .Values.env | indent 12 }}
+          {{- if .Values.postgres.enabled }}
+            - name: RADARR__POSTGRES__HOST
+              value: "127.0.0.1"
+            - name: RADARR__POSTGRES__PORT
+              value: "5432"
+            - name: RADARR__POSTGRES__USER
+              value: {{ .Values.postgres.auth.username | quote }}
+            - name: RADARR__POSTGRES__PASSWORD
+              value: {{ .Values.postgres.auth.password | quote }}
+            - name: RADARR__POSTGRES__MAINDB
+              value: {{ .Values.postgres.databases.main | quote }}
+            - name: RADARR__POSTGRES__LOGDB
+              value: {{ .Values.postgres.databases.log | quote }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 7878
@@ -35,6 +59,48 @@ spec:
 {{ toYaml .Values.volumeMounts | indent 12 }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+      {{- if .Values.postgres.enabled }}
+        - name: postgres
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.auth.username | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.auth.password | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.auth.database | quote }}
+            - name: PGDATA
+              value: {{ .Values.postgres.dataDir | quote }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Values.postgres.persistence.claimName }}
+              mountPath: {{ .Values.postgres.persistence.mountPath }}
+              subPath: {{ .Values.postgres.persistence.subPath }}
+            - name: postgres-init
+              mountPath: /docker-entrypoint-initdb.d
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgres.auth.username }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgres.auth.username }}
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+{{ toYaml .Values.postgres.resources | indent 12 }}
+      {{- end }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
