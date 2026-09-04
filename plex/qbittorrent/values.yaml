@@ -76,7 +76,7 @@ qbittorrent:
     periodSeconds: 10
   livenessProbe:
     initialDelaySeconds: 60
-    failureThreshold: 30
+    failureThreshold: 5
     periodSeconds: 60
     timeoutSeconds: 60
   resources:
