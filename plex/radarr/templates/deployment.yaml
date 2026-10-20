@@ -110,6 +110,8 @@ spec:
                 - pg_isready
                 - -U
                 - {{ .Values.postgres.auth.username }}
+                - -d
+                - {{ .Values.postgres.databases.main }}
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
@@ -118,6 +120,8 @@ spec:
                 - pg_isready
                 - -U
                 - {{ .Values.postgres.auth.username }}
+                - -d
+                - {{ .Values.postgres.databases.main }}
             initialDelaySeconds: 30
             periodSeconds: 30
           resources:
