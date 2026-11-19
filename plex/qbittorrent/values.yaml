@@ -30,7 +30,7 @@ gluetun:
   serverRegions: ""
   image:
     repository: ghcr.io/qdm12/gluetun
-    tag: v3
+    tag: latest
     pullPolicy: IfNotPresent
   env:
     TZ: UTC
